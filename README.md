@@ -1,2 +1,2 @@
-# LMS-Algorithm
-Implementation of LMS algorithm
+# Algorithm
+Implementations of algorithms
