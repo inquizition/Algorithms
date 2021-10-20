@@ -1,2 +1,2 @@
-# Algorithm
+# Algorithms
 Implementations of algorithms
