@@ -6,22 +6,9 @@
 #include<error.h>
 #include"CNN.c"
 
-int16_t input[5] = {1,1,1,1,1};
-
 float x2[80];
 
 uint8_t y[3] = {0,1,2};
-
-float convW1[2][2];
-float convW2[2][2];
-
-float weights2[17][5];
-float weights3[5][3];
-
-float b1[1];
-float b2[1];
-float b3[5];
-float b4[3];
 
 struct my_record {
     int xa;
@@ -29,9 +16,9 @@ struct my_record {
 };
 
 struct my_data{
-    float x[80];
-    uint8_t y;
-};
+        float x[80];
+        uint8_t y;
+    };
 
 void readData(struct my_data *data, int16_t numOfData) {
     FILE* fp;
@@ -126,8 +113,31 @@ void shuffle(struct my_data *data, size_t n)
     }
 }
 
-void train(struct my_data *data, uint16_t nOfData, uint16_t epochs, float lr) {
+void train(struct my_data *data, uint16_t nOfData, uint16_t epochs, float lr, size_t inpSize) {
     srand(time(NULL));
+
+    size_t filtSize = 2;
+
+    /* Conv layer sizes */
+    size_t s1 = (int) ((inpSize - (filtSize*2))/filtSize);
+
+    size_t s2 = (int) ((s1 - (filtSize*2))/filtSize);
+
+    /* Dense layer sizes */
+    size_t s3 = 5;
+    size_t s4 = 3;
+
+    /* Filter 2 Sizes */
+    float weights2[s2][s3];
+    float weights3[s3][s4];
+
+    float convW1[filtSize][filtSize];
+    float convW2[filtSize][filtSize];
+
+    float b1[1];
+    float b2[1];
+    float b3[s3];
+    float b4[s4];
     
     int batches = 10;
     uint16_t val_size = floor(nOfData/batches);
@@ -138,31 +148,31 @@ void train(struct my_data *data, uint16_t nOfData, uint16_t epochs, float lr) {
     struct my_data hold_out[val_size];
     struct my_data tra[training_size];
 
-    int inputSize = 80;
+    //int inputSize = 80;
 
-    float x1[80];
+    float x1[inpSize];
     
-    float l2q[38];
-    float l3q[17];
-    float l4q[5];
-    float l5q[3];
+    float l2q[s1];
+    float l3q[s2];
+    float l4q[s3];
+    float l5q[s4];
 
-    float z2[38];
-    float z3[17];
-    float z4[5];
-    float z5[3];
+    float z2[s1];
+    float z3[s2];
+    float z4[s3];
+    float z5[s4];
 
-    float dQ4[5];
-    float dQ3[17];
-    float dQ2[38];
-    float dQ1[80];
+    float dQ4[s3];
+    float dQ3[s2];
+    float dQ2[s1];
+    float dQ1[inpSize];
     
     Layer *fLayer = NULL;
     fLayer = (Layer *) malloc(sizeof(Layer));
     Layer *l1 = fLayer;
     l1->q = x1;
-    l1->M = inputSize;
-    l1->inputSize = inputSize;
+    l1->M = inpSize;
+    l1->inputSize = inpSize;
     l1->dQ = dQ1;
 
     l1->next = (Layer *) malloc(sizeof(Layer));
@@ -170,7 +180,7 @@ void train(struct my_data *data, uint16_t nOfData, uint16_t epochs, float lr) {
     l1->q = l2q;
     l1->z = z2;
     l1->dQ = dQ2;
-    l1->M = 4;
+    l1->M = filtSize*filtSize;
     l1->N = 1;
 
     l1->next = (Layer *) malloc(sizeof(Layer));
@@ -178,7 +188,7 @@ void train(struct my_data *data, uint16_t nOfData, uint16_t epochs, float lr) {
     l1->q = l3q;
     l1->z = z3;
     l1->dQ = dQ3;
-    l1->M = 4;
+    l1->M = filtSize*filtSize;
     l1->N = 1;
 
     l1->next = (Layer *) malloc(sizeof(Layer));
@@ -186,14 +196,14 @@ void train(struct my_data *data, uint16_t nOfData, uint16_t epochs, float lr) {
     l1->q = l4q;
     l1->z = z4;
     l1->dQ = dQ4;
-    l1->M = 17;
-    l1->N = 5;
+    l1->M = s2;
+    l1->N = s3;
     l1->next = (Layer *) malloc(sizeof(Layer));
     l1 = l1->next;
     l1->q = l5q;
     l1->z = z5;
-    l1->M = 5;
-    l1->N = 3;
+    l1->M = s3;
+    l1->N = s4;
     l1->next = NULL;
 
     l1 = fLayer->next;
@@ -297,7 +307,7 @@ int main() {
     readData(symbols, 50);
 
     shuffle(symbols, nOfTrainData);
-    train(symbols, nOfTrainData, 25, 0.002);    
+    train(symbols, nOfTrainData, 25, 0.002, 80);    
 
     return 0;
 }
