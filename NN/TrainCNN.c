@@ -299,6 +299,113 @@ void train(struct my_data *data, uint16_t nOfData, uint16_t epochs, float lr, si
 
 }
 
+void train_test(float *data, uint8_t y, float lr, size_t inpSize) {
+    srand(time(NULL));
+
+    size_t filtSize = 2;
+
+    /* Conv layer sizes */
+    size_t s1 = (int) ((inpSize - (filtSize*2))/filtSize);
+
+    size_t s2 = (int) ((s1 - (filtSize*2))/filtSize);
+
+    /* Dense layer sizes */
+    size_t s3 = 5;
+    size_t s4 = 3;
+
+    /* Filter 2 Sizes */
+    float weights2[s2][s3];
+    float weights3[s3][s4];
+
+    float convW1[filtSize][filtSize];
+    float convW2[filtSize][filtSize];
+
+    float b1[1];
+    float b2[1];
+    float b3[s3];
+    float b4[s4];
+
+    float x1[inpSize];
+    
+    float l2q[s1];
+    float l3q[s2];
+    float l4q[s3];
+    float l5q[s4];
+
+    float z2[s1];
+    float z3[s2];
+    float z4[s3];
+    float z5[s4];
+
+    float dQ4[s3];
+    float dQ3[s2];
+    float dQ2[s1];
+    float dQ1[inpSize];
+    
+    Layer *fLayer = NULL;
+    fLayer = (Layer *) malloc(sizeof(Layer));
+    Layer *l1 = fLayer;
+    l1->q = x1;
+    l1->M = inpSize;
+    l1->inputSize = inpSize;
+    l1->dQ = dQ1;
+
+    l1->next = (Layer *) malloc(sizeof(Layer));
+    l1 = l1->next;
+    l1->q = l2q;
+    l1->z = z2;
+    l1->dQ = dQ2;
+    l1->M = filtSize*filtSize;
+    l1->N = 1;
+
+    l1->next = (Layer *) malloc(sizeof(Layer));
+    l1 = l1->next;
+    l1->q = l3q;
+    l1->z = z3;
+    l1->dQ = dQ3;
+    l1->M = filtSize*filtSize;
+    l1->N = 1;
+
+    l1->next = (Layer *) malloc(sizeof(Layer));
+    l1 = l1->next;
+    l1->q = l4q;
+    l1->z = z4;
+    l1->dQ = dQ4;
+    l1->M = s2;
+    l1->N = s3;
+    l1->next = (Layer *) malloc(sizeof(Layer));
+    l1 = l1->next;
+    l1->q = l5q;
+    l1->z = z5;
+    l1->M = s3;
+    l1->N = s4;
+    l1->next = NULL;
+
+    l1 = fLayer->next;
+    l1->weights = &convW1[0][0];
+    l1->bias = b1;
+
+    l1 = l1->next;
+    l1->weights = &convW2[0][0];
+    l1->bias = b2;
+
+    l1 = l1->next;
+    l1->weights = &weights2[0][0];
+    l1->bias = b3;
+
+    l1 = l1->next;
+    l1->weights = &weights3[0][0];
+    l1->bias = b4;
+
+    initWeights(fLayer->next);
+
+    float outVec[3];
+
+    fLayer->q = data;
+    forwardPass(fLayer, outVec, y, lr);
+
+}
+
 int main() {
 
     int nOfTrainData = 50*3;
