@@ -8,6 +8,8 @@
 
 float x2[80];
 
+#define DATALEN         800
+
 uint8_t y[3] = {0,1,2};
 
 struct my_record {
@@ -17,6 +19,11 @@ struct my_record {
 
 struct my_data{
         float x[80];
+        uint8_t y;
+    };
+
+struct my_data2{
+        float x[DATALEN];
         uint8_t y;
     };
 
@@ -299,7 +306,11 @@ void train(struct my_data *data, uint16_t nOfData, uint16_t epochs, float lr, si
 
 }
 
-void train_test(float *data, uint8_t y, float lr, size_t inpSize) {
+void train_test(struct Layer* model, float x, float y){
+
+}
+
+void makeModel(struct Layer* fLayer, size_t inpSize, float *w1, float *w2, float* convW1, float *convW2) {
     srand(time(NULL));
 
     size_t filtSize = 2;
@@ -314,11 +325,11 @@ void train_test(float *data, uint8_t y, float lr, size_t inpSize) {
     size_t s4 = 3;
 
     /* Filter 2 Sizes */
-    float weights2[s2][s3];
-    float weights3[s3][s4];
+    //float weights2[s2][s3];
+    //float weights3[s3][s4];
 
-    float convW1[filtSize][filtSize];
-    float convW2[filtSize][filtSize];
+    //float convW1[filtSize][filtSize];
+    //float convW2[filtSize][filtSize];
 
     float b1[1];
     float b2[1];
@@ -342,7 +353,7 @@ void train_test(float *data, uint8_t y, float lr, size_t inpSize) {
     float dQ2[s1];
     float dQ1[inpSize];
     
-    Layer *fLayer = NULL;
+    //Layer *fLayer = NULL;
     fLayer = (Layer *) malloc(sizeof(Layer));
     Layer *l1 = fLayer;
     l1->q = x1;
@@ -382,39 +393,73 @@ void train_test(float *data, uint8_t y, float lr, size_t inpSize) {
     l1->next = NULL;
 
     l1 = fLayer->next;
-    l1->weights = &convW1[0][0];
+    l1->weights = &convW1;
     l1->bias = b1;
 
     l1 = l1->next;
-    l1->weights = &convW2[0][0];
+    l1->weights = &convW2;
     l1->bias = b2;
 
     l1 = l1->next;
-    l1->weights = &weights2[0][0];
+    l1->weights = &w1;
     l1->bias = b3;
 
     l1 = l1->next;
-    l1->weights = &weights3[0][0];
+    l1->weights = &w2;
     l1->bias = b4;
 
-    initWeights(fLayer->next);
+    //return fLayer;
+}
 
-    float outVec[3];
-
-    fLayer->q = data;
-    forwardPass(fLayer, outVec, y, lr);
-
+void delModel(struct Layer* head) {
+    struct Layer* tmp;
+    while(head != NULL) {
+        tmp = head;
+        head = head->next;
+        free(tmp);
+    }
 }
 
 int main() {
 
     int nOfTrainData = 50*3;
 
+    struct my_data2 symb[nOfTrainData];
     struct my_data symbols[nOfTrainData];
     readData(symbols, 50);
 
+    readData(symb, 50);
+
     shuffle(symbols, nOfTrainData);
-    train(symbols, nOfTrainData, 25, 0.002, 80);    
+
+    shuffle(symb, nOfTrainData);
+    //train(symbols, nOfTrainData, 25, 0.002, 80);   
+    size_t filtSize = 2;
+
+    /* Conv layer sizes */
+    size_t firstInpSize = 80;
+    size_t s1 = (int) ((firstInpSize - (filtSize*2))/filtSize);
+
+    size_t s2 = (int) ((s1 - (filtSize*2))/filtSize);
+
+    /* Dense layer sizes */
+    size_t s3 = 5;
+    size_t s4 = 3;
+    float weights2[s2][s3];
+    float weights3[s3][s4];
+
+    float convW1[filtSize][filtSize];
+    float convW2[filtSize][filtSize];
+
+    Layer *fLayer = NULL;
+    makeModel(fLayer, firstInpSize,weights2, weights3, convW1, convW2);
+
+    uint8_t i;
+    for(i = 0; i < nOfTrainData; i++) {
+        float *data = symbols[i].x;
+        uint8_t y = symbols[i].y;
+        train_test(data, y, 0.002, 80);
+    } 
 
     return 0;
 }
