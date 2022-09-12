@@ -14,7 +14,7 @@ class Trueskill:
 
 
 
-class nd:
+class Message:
 
     def __init__(self, mu, sigma):
         self.mu = mu
