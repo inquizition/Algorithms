@@ -3,10 +3,24 @@
 #include "Message.h"
 
 
-void update_skills_MP(struct Message t1,struct Message t2, float var_t, float y_obs)
+float update_skills_MP(struct Message t1,struct Message t2, float var_t, float y_obs)
 {
     struct Message mu1 = { .mu = t1.mu, .var = t1.var};
-    struct Message mu1 = { .mu = t2.mu, .var = t2.var};
+    struct Message mu2 = { .mu = t2.mu, .var = t2.var};
+    struct Message mu3 = mu1;
+    struct Message mu4 = mu2; 
+    struct Message mu5 = { .mu = (t1.mu - t2.mu), .var = (t1.var + t2.var + var_t)}; 
+    struct Message marginal_t = truncMM(mu5, y_obs); 
+    struct Message mu9 = divide(marginal_t, mu5);
+    struct Message mu10 = { .mu = mu9.mu + mu2.mu, .var = var_t + mu2.var + mu9.var};
+    struct Message mu11 = { .mu = mu1.mu - mu9.mu, .var = var_t + mu1.var + mu9.var};
+    struct Message marginal_s1 = multiply(mu10, mu1);
+    struct Message marginal_s2 = multiply(mu11, mu2);
+    t1.mu = marginal_s1.mu;
+    t1.var = marginal_s1.var;
+    t2.mu = marginal_s2.mu;
+    t2.var = marginal_s2.var;
+    return mu5.var;
 }
 static struct Message multiply(struct Message m_1, struct Message m_2)
 {
