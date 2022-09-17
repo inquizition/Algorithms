@@ -63,15 +63,15 @@ static struct Message truncMM(struct Message m, float y_obs)
     {
         float a = 0.0;
         float b = -2.0/0.0;
-        m_out.mu = MM_mean(a,b,m.mu,m.var);
-        m_out.var = MM_var(a,b,m.mu,m.var);
+        m_out.mu = MM_mean(a,b,m.mu,sqrt(m.var));
+        m_out.var = MM_var(a,b,m.mu,sqrt(m.var));
     }
     else if(y_obs == 0)
     {
         float a = 2.0/0.0;
         float b = 0.0;
-        m_out.mu = MM_mean(a,b,m.mu,m.var);
-        m_out.var = MM_var(a,b,m.mu,m.var);
+        m_out.mu = MM_mean(a,b,m.mu,sqrt(m.var));
+        m_out.var = MM_var(a,b,m.mu,sqrt(m.var));
     }
     else
     {

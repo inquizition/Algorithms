@@ -8,7 +8,7 @@ void main( void )
 
     float y_obs[5] = {1.0, 0.0, 1.0, 0.0, 1.0};
 
-    float start_var = 5;
+    float start_var = 5; // 
 
     uint8_t i;
     for (i = 0; i < 5; i++)

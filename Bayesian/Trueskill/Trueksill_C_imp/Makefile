@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-I. -lm
-DEPS = Trueskill.h Message.h
-OBJ = Trueskill.o Message.o 
+DEPS = Message.h Trueskill.h
+OBJ = Message.o Trueskill.o
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
