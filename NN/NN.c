@@ -17,22 +17,15 @@ float d_relu(float z) {
     }
 }
 
-struct Linear linear( int in_features, int out_features)
+void linear( struct Linear linear_model, struct Matrix x, struct Matrix *y)
 {
-    struct Linear *linear_model;
-    int L = sizeof(in_features);
-    int M = sizeof(out_features);
-    linear_model->weight    =   (float*)malloc(L*M);
-    linear_model->bias      =   (float*)malloc(sizeof(L));
-    int i;
-    for(i = 0; i < L*M; i++)
-    {
-        if( i < M)
-        {
-            linear_model->bias[i] = randn();
-        }
-        linear_model->weight[i] = randn();
-    }
+
+    //InitRandomMatrix(&linear_model->weight);
+    //InitRandomMatrix(&linear_model->bias);
+    transpose(&linear_model.weight);
+    matMult(x, *linear_model.weight, y);
+    
+
     
     return linear_model;
 }

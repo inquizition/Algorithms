@@ -47,7 +47,8 @@ float toQ15(int16_t num, int mult) {
 void dispMatrix(float *mat, int M, int N) {
     printf("Matrix: \n");
     printf("[%f", mat[0]);
-    for(int i = 1; i < M*N; i++) {
+    int i;
+    for(i = 1; i < M*N; i++) {
         if(i % N == 0) {
             printf("] \n");
         } else {

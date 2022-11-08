@@ -1,6 +1,7 @@
 #include "stdint.h"
+#include "Matrix.h"
 
 typedef struct Linear {
-    float * weight;
-    float * bias;
+    struct Matrix *weight;
+    struct Matrix *bias;
 } Linear;
