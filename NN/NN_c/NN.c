@@ -55,7 +55,7 @@ struct Linear *InitLayer(int input_features, int output_features)
 {
     struct Linear *linear_model = (struct Linear*)malloc(sizeof(struct Linear));
     linear_model->weight = allocateMatrix(output_features, input_features);
-    linear_model->bias = allocateMatrix(1, input_features);
+    linear_model->bias = allocateMatrix(1, output_features);
     linear_model->output = allocateMatrix(1, output_features);
 
     linear_model->output->rows = 1;
@@ -97,8 +97,18 @@ void testLinear()
     linear(lin_layer, *x);
     print_matrix(*lin_layer->output);
 
+    struct Matrix *answer = allocateMatrix(1,2);
+    double data_2[1][2] = {{7,7}};
+    fillMatrix(answer, *data_2);
+
+    if( !cmpMatrix(*lin_layer->output, *answer))
+    {
+        printf("linearTestFailed!");
+    }
+
     freeLayer(lin_layer);
     freeMatrix(x);
+    freeMatrix(answer);
 }
 
 int main( void )

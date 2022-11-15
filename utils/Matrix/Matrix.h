@@ -1,5 +1,6 @@
 #include "math.h"
 #include "stdio.h"
+#include <stdbool.h>
 
 typedef struct Matrix
 {
@@ -28,3 +29,4 @@ void matrixAdd(struct Matrix *matrix, struct Matrix a);
 void copyMatrix(struct Matrix src, struct Matrix *dest);
 
 struct Matrix *allocateMatrix(int rows, int columns);
+bool cmpMatrix(struct Matrix m1, struct Matrix m2);

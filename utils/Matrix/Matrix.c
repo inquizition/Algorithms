@@ -207,6 +207,26 @@ void eye(struct Matrix *matrix)
 
 }
 
+bool cmpMatrix(struct Matrix m1, struct Matrix m2)
+{
+    int r;
+    int c;
+    bool equal = true;
+    for(r = 0; r < m1.rows; r++) 
+    {
+        for(c = 0; c < m1.columns; c++)
+        {
+            if(m1.data[r][c] != m2.data[r][c])
+            {
+                equal = false;
+            }
+
+        }
+    }
+
+    return equal;
+}
+
 void ones(struct Matrix *matrix)
 {
     int r;
