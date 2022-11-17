@@ -30,3 +30,5 @@ void copyMatrix(struct Matrix src, struct Matrix *dest);
 
 struct Matrix *allocateMatrix(int rows, int columns);
 bool cmpMatrix(struct Matrix m1, struct Matrix m2);
+void hadamard_prod(struct Matrix m1, struct Matrix m2, struct Matrix* res);
+void matrixSubtract(struct Matrix matrix, struct Matrix a, struct Matrix *res);

@@ -8,3 +8,5 @@ typedef struct Linear {
     struct Matrix *bias;
     struct Matrix *output;
 } Linear;
+
+double MSE_loss(struct Matrix pred, struct Matrix y);

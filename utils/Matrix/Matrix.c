@@ -119,6 +119,35 @@ void matrixAdd(struct Matrix *matrix, struct Matrix a)
     }
 }
 
+void matrixSubtract(struct Matrix matrix, struct Matrix a, struct Matrix *res)
+{
+    bool single_element = (a.columns == 1 && a.rows == 1);
+    bool equal_rows = (a.rows == matrix.rows);
+    bool equal_columns = (a.columns == matrix.columns);
+    assert( single_element || equal_rows || equal_columns );
+
+    int r;
+    int c;
+    for(r = 0; r < matrix.rows; r++)
+    {
+        for(c = 0; c < matrix.columns; c++)
+        {
+            if(single_element)
+            {
+                res->data[r][c] = matrix.data[r][c] - a.data[0][0];  
+            }
+            else if(equal_rows)
+            {
+                res->data[r][c] = matrix.data[r][c] - a.data[r][0];
+            }
+            else if(equal_columns)
+            {
+                res->data[r][c] = matrix.data[r][c] - a.data[0][c];
+            }
+        }
+    }
+}
+
 void transpose(struct Matrix **m)
 {
     struct Matrix *temp = *m;
@@ -306,6 +335,25 @@ void matMult(struct Matrix m1, struct Matrix m2, struct Matrix *res)
             {
                 res->data[r][c] += m1.data[r][i] * m2.data[i][c];
             }
+        }
+    }
+}
+
+void hadamard_prod(struct Matrix m1, struct Matrix m2, struct Matrix* res)
+{
+    assert(m1.rows == m2.rows);
+    assert(m1.columns == m2.columns);
+    res->rows = m1.rows;
+    res->columns = m1.columns;
+
+    int r;
+    int c;
+
+    for(r = 0; r < m1.rows; r++)
+    {
+        for(c = 0; c < m1.columns; c++)
+        {
+            res->data[r][c] += m1.data[r][c] * m2.data[r][c];
         }
     }
 }
