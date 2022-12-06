@@ -10,8 +10,27 @@ void relu(struct Matrix z, struct Matrix *a);
 struct Linear *InitLayer(int input_features, int output_features);
 void linear( struct Linear *linear_model, struct Matrix x);
 void output_error(struct Matrix z, struct Matrix y, struct Matrix error);
+void add_layer(layers_t * head, struct Linear layer);
 
 void testLinear();
+
+void remove_layer(layers_t * head) {
+    /* if there is only one item in the list, remove it */
+    if (head->next_layer == NULL) {
+        free(head);
+    }
+
+    /* get to the second to last node in the list */
+    layers_t * current = head;
+    while (current->next_layer->next_layer != NULL) {
+        current = current->next_layer;
+    }
+
+    /* now current points to the second to last item of the list, so let's remove current->next */
+    free(current->next_layer);
+    current->next_layer = NULL;
+
+}
 
 void relu(struct Matrix z, struct Matrix *a)
 {
@@ -77,6 +96,11 @@ void output_error(struct Matrix z, struct Matrix y, struct Matrix error)
     freeMatrix(dz);
 }
 
+void recursive_error(struct Linear layer, struct Matrix weights, struct Matrix error_L, struct Matrix z)
+{
+
+}
+
 double MSE_loss(struct Matrix pred, struct Matrix y)
 {
     double mse = 0.0;
@@ -114,6 +138,19 @@ struct Linear *InitLayer(int input_features, int output_features)
     InitRandomMatrix(linear_model->bias);
 
     return linear_model;
+}
+
+void add_layer(layers_t * head, struct Linear layer)
+{
+    layers_t * current = head;
+    while (current->next_layer != NULL) {
+        current = current->next_layer;
+    }
+
+    /* now we can add a new variable */
+    current->next_layer = (layers_t *) malloc(sizeof(layers_t));
+    current->next_layer->layer = layer;
+    current->next_layer->next_layer = NULL;
 }
 
 void freeLayer(struct Linear *layer)
@@ -162,6 +199,8 @@ void testLinear()
 
 void output_error_test()
 {
+    layers_t layers;
+
     struct Matrix *x = allocateMatrix(1,3);
     double data[1][3] = {{1,2,3}};
     fillMatrix(x, *data);
@@ -173,8 +212,10 @@ void output_error_test()
 
     linear(lin_layer, *x);
 
+    add_layer(&layers, *lin_layer);
+
     struct Matrix *answer = allocateMatrix(1,2);
-    double data_2[1][2] = {{7,7}};
+    double data_2[1][2] = {{6,6}};
     fillMatrix(answer, *data_2);
 
     print_matrix(*lin_layer->output);

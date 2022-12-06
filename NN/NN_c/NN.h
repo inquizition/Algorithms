@@ -9,4 +9,10 @@ typedef struct Linear {
     struct Matrix *output;
 } Linear;
 
+typedef struct layer {
+    struct Linear layer;
+    struct layer *next_layer;
+} layers_t;
+
+
 double MSE_loss(struct Matrix pred, struct Matrix y);
