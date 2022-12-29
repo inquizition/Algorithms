@@ -230,36 +230,36 @@ void output_error_test()
     freeMatrix(erro);
 }
 
-int main( void )
-{
-    printf("Start \n");
-    srand(time(NULL));
+// int main( void )
+// {
+//     printf("Start \n");
+//     srand(time(NULL));
 
-    printf("Linear test\n");
-    testLinear();
+//     printf("Linear test\n");
+//     testLinear();
 
-    printf("Output Error test\n");
-    output_error_test();
+//     printf("Output Error test\n");
+//     output_error_test();
 
-    // struct Matrix *x = allocateMatrix(1,3);
-    // double data[1][3] = {{1,2,3}};
-    // fillMatrix(x, *data);
-    // print_matrix(*x);
+//     // struct Matrix *x = allocateMatrix(1,3);
+//     // double data[1][3] = {{1,2,3}};
+//     // fillMatrix(x, *data);
+//     // print_matrix(*x);
 
-    // struct Linear *lin_layer_1 = InitLayer(3,3);
-    // struct Linear *lin_layer_2 = InitLayer(3,2);
+//     // struct Linear *lin_layer_1 = InitLayer(3,3);
+//     // struct Linear *lin_layer_2 = InitLayer(3,2);
 
-    // print_layer(*lin_layer_1);
-    // print_layer(*lin_layer_2);
+//     // print_layer(*lin_layer_1);
+//     // print_layer(*lin_layer_2);
 
-    // linear(lin_layer_1, *x);
-    // print_matrix(*lin_layer_1->output);
-    // linear(lin_layer_2, *lin_layer_1->output);
-    // print_matrix(*lin_layer_2->output);
+//     // linear(lin_layer_1, *x);
+//     // print_matrix(*lin_layer_1->output);
+//     // linear(lin_layer_2, *lin_layer_1->output);
+//     // print_matrix(*lin_layer_2->output);
 
-    // freeLayer(lin_layer_1);
-    // freeLayer(lin_layer_2);
-    // freeMatrix(x);
+//     // freeLayer(lin_layer_1);
+//     // freeLayer(lin_layer_2);
+//     // freeMatrix(x);
 
-    return 1;
-}
+//     return 1;
+// }
