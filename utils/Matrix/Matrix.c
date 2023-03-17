@@ -1,15 +1,40 @@
 #include "Matrix.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
 #include <stdbool.h>
+#include <assert.h>
 
 static void swap(double* arg1, double* arg2);
 static double **allocate2Darray(int rows, int columns);
 static void free2Darray(double **arr, int rows, int columns);
 
-#define get_array(arr2d) Ma*(float(*)[(arr2d)->columns])(arr2d)->data
+// static struct Node list_of_allocated_matrices = {NULL, NULL};
 
+
+// void add_to_list(struct Matrix ptr)
+// {
+//     struct Node *new_node = malloc(sizeof(struct Node));
+//     new_node->ptr = *ptr;
+//     new_node->next = NULL;
+// 
+//     struct Node *curr = &list_of_allocated_matrices;
+//     while(curr->next != NULL)
+//     {
+//         curr = curr->next;
+//     } 
+//     curr->next = new_node;
+// }
+// 
+// void remove_all_allocated( void )
+// {
+//     struct Node *curr = &list_of_allocated_matrices;
+//     while(curr != NULL)
+//     {
+//         freeMatrix((struct Matrix*)curr->ptr);
+//         free(curr->ptr);
+//         curr = curr->next;
+//     }
+// }
 
 void print_matrix(struct Matrix m)
 {
@@ -17,6 +42,8 @@ void print_matrix(struct Matrix m)
     int N = m.rows;
     int r;
     int c;
+
+    printf("\n");
     for(r = 0; r < N; r++)
     {
         for(c = 0; c < M; c++)
@@ -90,30 +117,33 @@ static void swap(double* arg1, double* arg2)
     *arg2 = buffer;
 }
 
-void matrixAdd(struct Matrix *matrix, struct Matrix a)
+void matrixAdd(struct Matrix matrix, struct Matrix a, struct Matrix *res)
 {
     bool single_element = (a.columns == 1 && a.rows == 1);
-    bool equal_rows = (a.rows == matrix->rows);
-    bool equal_columns = (a.columns == matrix->columns);
-    assert( single_element || equal_rows || equal_columns );
-
+    bool equal_rows = (a.rows == matrix.rows);
+    bool equal_columns = (a.columns == matrix.columns);
+    
     int r;
     int c;
-    for(r = 0; r < matrix->rows; r++)
+    for(r = 0; r < matrix.rows; r++)
     {
-        for(c = 0; c < matrix->columns; c++)
+        for(c = 0; c < matrix.columns; c++)
         {
             if(single_element)
             {
-              matrix->data[r][c] += a.data[0][0];  
+              res->data[r][c] = matrix.data[r][c] + a.data[0][0];  
+            }
+            else if(equal_rows && equal_columns)
+            {
+                res->data[r][c] = matrix.data[r][c] + a.data[r][c];
             }
             else if(equal_rows)
             {
-                matrix->data[r][c] += a.data[r][0];
+                res->data[r][c] = matrix.data[r][c] + a.data[r][0];
             }
             else if(equal_columns)
             {
-                matrix->data[r][c] += a.data[0][c];
+                res->data[r][c] = matrix.data[r][c] + a.data[0][c];
             }
         }
     }
@@ -124,8 +154,7 @@ void matrixSubtract(struct Matrix matrix, struct Matrix a, struct Matrix *res)
     bool single_element = (a.columns == 1 && a.rows == 1);
     bool equal_rows = (a.rows == matrix.rows);
     bool equal_columns = (a.columns == matrix.columns);
-    assert( single_element || equal_rows || equal_columns );
-
+    
     int r;
     int c;
     for(r = 0; r < matrix.rows; r++)
@@ -135,6 +164,10 @@ void matrixSubtract(struct Matrix matrix, struct Matrix a, struct Matrix *res)
             if(single_element)
             {
                 res->data[r][c] = matrix.data[r][c] - a.data[0][0];  
+            }
+            else if(equal_rows && equal_columns)
+            {
+                res->data[r][c] = matrix.data[r][c] - a.data[r][c];
             }
             else if(equal_rows)
             {
@@ -172,8 +205,6 @@ void transpose(struct Matrix **m)
 
 void zeros(struct Matrix *matrix)
 {
-    //allocMatrix(matrix);
-    //matrix = allocateMatrix(matrix->rows, matrix->columns);
     int r;
     int c;
     for(r = 0; r < matrix->rows; r++)
@@ -193,8 +224,7 @@ void fillMatrix(struct Matrix *matrix, double *data)
     {
         for(c = 0; c < matrix->columns; c++)
         {
-            //printf("c: %d, r: %d, rows: %d, columns: %d\n", c,r,matrix->rows, matrix->columns);
-            matrix->data[r][c] = data[c + (matrix->rows*r)];
+            matrix->data[r][c] = data[c + (matrix->columns*r)];
         }
     }
 }
@@ -215,7 +245,6 @@ void InitRandomMatrix(struct Matrix *matrix)
 
 void eye(struct Matrix *matrix)
 {
-    assert(matrix->columns == matrix->rows);
 
     int r;
     int c;
@@ -269,23 +298,43 @@ void ones(struct Matrix *matrix)
     }
 }
 
-double dot(struct Matrix m1, struct Matrix m2)
+void dot(struct Matrix m1, struct Matrix m2, union Result *res)
 {
-    assert(m1.columns == m2.columns);
-    assert(m1.rows == m2.rows);
+    assert(m1.columns == m2.rows);
 
-    double res;
+    int rows = m1.rows;
+    int cols = m2.columns;
+    int middle = m1.columns;
+    
     int r;
     int c;
-    for(r = 0; r < m1.rows; r++)
+    int i;
+
+    if( (rows == 1) && (cols == 1) )
     {
-        for(c = 0; c < m1.columns; c++)
+	res->res = 0;
+        for(c = 0; c < middle; c++)
         {
-            res += m1.data[r][c] * m2.data[r][c];
+            res->res += m1.data[0][c] * m2.data[c][0];
         }
     }
+    else
+    {
+        assert(res->m.rows == rows);
+        assert(res->m.columns == cols);
 
-    return res;
+        for(r = 0; r < res->m.rows; r++)
+        {
+            for(c = 0; c < res->m.columns; c++)
+            {
+                for(i = 0; i < middle; i++)
+                {
+                    res->m.data[r][c] += m1.data[r][i] * m2.data[i][c];
+                }
+            }
+        }
+
+    }
 }
 
 double vectorMult(double *v1, double *v2, int length)
@@ -304,7 +353,6 @@ void copyMatrix(struct Matrix src, struct Matrix *dest)
 {
     dest->columns = src.columns;
     dest->rows = src.rows;
-    zeros(dest);
     int r;
     int c;
     for(r = 0; r < src.rows; r++)
@@ -318,7 +366,6 @@ void copyMatrix(struct Matrix src, struct Matrix *dest)
 
 void matMult(struct Matrix m1, struct Matrix m2, struct Matrix *res)
 {
-    assert(m1.columns == m2.rows);
     res->rows = m1.rows;
     res->columns = m2.columns;
     zeros(res);
@@ -341,10 +388,11 @@ void matMult(struct Matrix m1, struct Matrix m2, struct Matrix *res)
 
 void hadamard_prod(struct Matrix m1, struct Matrix m2, struct Matrix* res)
 {
-    assert(m1.rows == m2.rows);
-    assert(m1.columns == m2.columns);
     res->rows = m1.rows;
     res->columns = m1.columns;
+
+    assert(m1.columns == m2.columns);
+    assert(m1.rows == m2.rows);
 
     int r;
     int c;
@@ -357,53 +405,3 @@ void hadamard_prod(struct Matrix m1, struct Matrix m2, struct Matrix* res)
         }
     }
 }
-
-// int main()
-// {
-
-//     float data[5][5] = {    {0.1, 0.2, 0.3, 0.4, 0.5},
-//                             {0.1, 0.2, 0.3, 0.4, 0.5},
-//                             {0.1, 0.2, 0.3, 0.4, 0.5},
-//                             {0.1, 0.2, 0.3, 0.4, 0.5},
-//                             {0.1, 0.2, 0.3, 0.4, 0.5},};
-
-//     struct Matrix matrix = {.rows = 5, .columns = 5};
-//     zeros(&matrix);
-
-//     print_matrix(matrix);
-
-//     fillMatrix(&matrix, *data);
-
-//     print_matrix(matrix);
-
-//     transpose(&matrix);
-
-//     print_matrix(matrix);
-
-//     eye(&matrix);
-
-//     print_matrix(matrix);
-
-//     struct Matrix matrix2 = {.rows = 5, .columns = 5};
-//     zeros(&matrix2);
-//     ones(&matrix);
-//     ones(&matrix2);
-
-//     printf("dot: %.4f\n", dot(matrix, matrix2));
-
-//     struct Matrix matmultrix;
-//     matMult(matrix, matrix2, &matmultrix);
-
-//     print_matrix(matmultrix);
-
-//     struct Matrix matrix3 = {.rows = 5, .columns = 1};
-//     zeros(&matrix3);
-//     ones(&matrix3);
-
-//     struct Matrix matmultrix2;
-//     matMult(matrix, matrix3, &matmultrix2);
-
-//     print_matrix(matmultrix2);
-
-//     return 1;
-// }
