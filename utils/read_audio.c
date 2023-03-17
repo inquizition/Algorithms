@@ -7,33 +7,23 @@
 
 #define	BLOCK_SIZE 4096
 
-void read_wav_stat(void)
+void plot_wav(SNDFILE *snd_file, double start, double end, double step)
 {
 	FILE *fp;
 	float *buf;
-	char *filename;
-       	filename = "test.wav";
 
 	float channels = 2.0;
 	
-	SNDFILE *snd_file;
-	SF_INFO sfinfo;
 	sf_count_t frames;
 	
 	buf = malloc(BLOCK_SIZE * sizeof(float));
 
 	frames = BLOCK_SIZE / channels;
-	snd_file = sf_open(filename, SFM_READ, &sfinfo);
 	
 	sf_readf_float(snd_file, buf, frames);
-	printf("buf val: %f, %f, %f", buf[0],buf[1], buf[2]);
 
-
-	double a = 0;
-	double b = 300;
-	double step = 1;	
 	fp = fopen("commands.gplot", "w");
-	fprintf ( fp, "plot [ %f : %f ] \'fn.dat\' w lines, 0 \n", a - step, b + step  );
+	fprintf ( fp, "plot [ %f : %f ] \'fn.dat\' w lines, 0 \n", start - step, end + step  );
     	fprintf ( fp, "pause mouse \n" );
     	fclose ( fp );
 
@@ -42,9 +32,9 @@ void read_wav_stat(void)
 	double x = 0.0;
 	int i = 0;
 
-    	for ( i = 0;  i <= 300 ;  i++ )
+    	for ( i = 0;  i <= BLOCK_SIZE ;  i++ )
     	{
-        	x = x + i;
+        	x = start + i * step;
         	fprintf ( fp, "%25.15f  %25.15f\n", x, buf[i] );
     	}  
                   
@@ -60,6 +50,15 @@ void read_wav_stat(void)
 
 int main(void)
 {
-		read_wav_stat();
+
+	char *filename;
+       	filename = "test.wav";
+	SF_INFO sfinfo;
+	SNDFILE *snd_file;
+	snd_file = sf_open(filename, SFM_READ, &sfinfo);
+
+	printf("samplerate: %d, frames: %d, channels: %d, format: %d", sfinfo.samplerate, sfinfo.frames, sfinfo.channels, sfinfo.format);
+	plot_wav(snd_file, 0.0, 2048.0, 1);
+
 	return 0;
 }
