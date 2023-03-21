@@ -8,5 +8,8 @@ matrix_tests:
 read_wav:
 	cd utils/ && $(MAKE) read_audio
 
+plot_lib:
+	cd utils/ && $(MAKE) plot_lib 
+
 clean:
 	cd utils/ &&  $(MAKE) clean

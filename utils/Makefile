@@ -25,5 +25,8 @@ run_tests: $(EXECUTABLE_TESTS)
 read_audio:
 	$(CC) read_audio.c $$(pkg-config sndfile --cflags --libs) && ./a.out
 
+plot_lib:
+	$(CC) plot_lib.c && ./a.out
+
 clean:
 	rm -f $(EXECUTABLE_TESTS) $(OBJECTS_PROGRAM) $(OBJECTS_TESTS)
