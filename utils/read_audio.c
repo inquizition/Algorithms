@@ -33,13 +33,13 @@ void plot_audio(char *filename)
 
 
 
-int main(void)
-{
-
-	char *filename;
-       	filename = "test.wav";
-
-	plot_audio(filename);
-
-	return 0;
-}
+// int main(void)
+// {
+// 
+// 	char *filename;
+//        	filename = "test.wav";
+// 
+// 	plot_audio(filename);
+// 
+// 	return 0;
+// }

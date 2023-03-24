@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "plot_lib.h"
 
 static bool allocated = false;
 static double x_start = 0.0;
@@ -88,3 +89,4 @@ void plot_fig( double* x, double* y, int len)
 // 
 // 	return 0;
 // }
+
