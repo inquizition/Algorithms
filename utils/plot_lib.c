@@ -1,5 +1,6 @@
 #include <float.h>
 #include <ctype.h>
+#include <sndfile.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -76,14 +77,14 @@ void plot_fig( double* x, double* y, int len)
 	memcpy(y_axis_ptr, y, length*sizeof(double));	
 }
 
-int main(void)
-{
-	double x[5] = {0.0, 1.0, 2.0, 3.0, 4.0};
-	double y[5] = {0.0, 1.0, 0.0, 1.0, 0.0};
-
-	plot_fig(x, y, 5);
-	show_plot();
-
-
-	return 0;
-}
+// int main(void)
+// {
+// 	double x[5] = {0.0, 1.0, 2.0, 3.0, 4.0};
+// 	double y[5] = {0.0, 1.0, 0.0, 1.0, 0.0};
+// 
+// 	plot_fig(x, y, 5);
+// 	show_plot();
+// 
+// 
+// 	return 0;
+// }
