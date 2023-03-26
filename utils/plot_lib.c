@@ -24,13 +24,13 @@ void show_plot( void )
 	FILE *fp;
 
 	fp = fopen("commands.gplot", "w");
-	fprintf ( fp, "plot [ %f : %f ] \'fn.dat\' w lines, 0 \n", x_axis_ptr[0], x_axis_ptr[length - 1]);
+	fprintf ( fp, "plot [ %f : %f ] \'fn.dat\' w lines \n", x_axis_ptr[0], x_axis_ptr[length - 1]);
     	fprintf ( fp, "pause mouse \n" );
     	fclose ( fp );
 	fp = fopen ( "fn.dat", "w" );    /* Open data file. */
 	
 	int i = 0;
-    	for ( i = 0;  i <= length;  i++ )
+    	for ( i = 0;  i <= length-1;  i++ )
     	{
         	fprintf ( fp, "%25.15f  %25.15f\n", x_axis_ptr[i], y_axis_ptr[i] );
     	}  
@@ -61,8 +61,8 @@ void plot_fig( double* x, double* y, int len)
 	length = len;	
 
 
-	set_xlim(x[0], x[length]);
-	set_ylim(y[0], y[length]);
+	set_xlim(x[0], x[length-1]);
+	set_ylim(y[0], y[length-1]);
 
 	if(allocated)
 	{
@@ -70,12 +70,12 @@ void plot_fig( double* x, double* y, int len)
 		free(y_axis_ptr);
 	}
 
-	x_axis_ptr = (double*) malloc(length*sizeof(double));
-	y_axis_ptr = (double*) malloc(length*sizeof(double));
+	x_axis_ptr = (double*) malloc(len*sizeof(double));
+	y_axis_ptr = (double*) malloc(len*sizeof(double));
 	allocated = true;
 
-	memcpy(x_axis_ptr, x, length*sizeof(double));	
-	memcpy(y_axis_ptr, y, length*sizeof(double));	
+	memcpy(x_axis_ptr, x, len*sizeof(double));	
+	memcpy(y_axis_ptr, y, len*sizeof(double));	
 }
 
 // int main(void)

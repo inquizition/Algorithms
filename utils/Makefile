@@ -32,6 +32,8 @@ read_audio:
 plot_lib:
 	$(CC) plot_lib.c && ./a.out
 
+fft:
+	$(CC) FFT.c plot_lib.c $$(pkg-config sndfile --cflags --libs) -lm -fno-stack-protector && ./a.out
 clean:
 	rm -f $(EXECUTABLE_TESTS) $(OBJECTS_PROGRAM) $(OBJECTS_TESTS)
 

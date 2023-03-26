@@ -11,5 +11,7 @@ read_wav:
 plot_lib:
 	cd utils/ && $(MAKE) plot_lib 
 
+fft:
+	cd utils/ && $(MAKE) fft
 clean:
 	cd utils/ &&  $(MAKE) clean
