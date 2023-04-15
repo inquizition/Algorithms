@@ -4,3 +4,7 @@
 .vscode/tasks.json
 .mvenv/*
 *.wav
+*.dat
+*.gplot
+*.out
+*/build/
