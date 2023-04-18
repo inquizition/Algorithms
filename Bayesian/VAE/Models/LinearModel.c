@@ -8,7 +8,10 @@ typedef struct
 
 LM *InitLinear()
 {
-
+	LM *model_ptr;
+	model_ptr = (LM*) malloc(sizeof(LM));
+	
+	model_ptr->A = allocateMatrix;	
 }
 
 

@@ -34,7 +34,7 @@ double vectorMult(double *v1, double *v2, int length);
 void print_matrix(Matrix m);
 
 void freeMatrix(Matrix *m);
-void InitRandomMatrix(Matrix *matrix, double lower, double upper);
+void InitRandomMatrix(Matrix *matrix);
 void transpose(Matrix **m);
 void matrixAdd(Matrix matrix, Matrix a, Matrix *res);
 void copyMatrix(Matrix src, Matrix *dest);

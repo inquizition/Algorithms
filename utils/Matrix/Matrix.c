@@ -245,11 +245,9 @@ void fillMatrix(Matrix *matrix, double *data)
     }
 }
 
-void InitRandomMatrix(Matrix *matrix, double lower, double upper)
+void InitRandomMatrix(Matrix *matrix)
 {
     //allocMatrix(matrix);
-    assert(lower < upper);
-    assert(abs(upper - lower) > RAND_MAX)
 
     int r;
     int c;
