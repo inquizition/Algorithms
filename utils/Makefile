@@ -1,7 +1,7 @@
 CC=gcc
 current_dir = $(shell pwd)
 VPATH = Matrix test_folder C:\cygwin64\usr\include\CUnit
-CFLAGS +=-IMatrix -lm -Wall -Itest_folder
+CFLAGS +=-IMatrix -lm -Wall -Itest_folder -Icunit\CUnit
 LDFLAGS = -lcunit -g
 SOURCES_PROGRAM = Matrix.c
 SOURCES_TESTS = Matrix_test.c
