@@ -34,7 +34,7 @@ double vectorMult(double *v1, double *v2, int length);
 void print_matrix(Matrix m);
 
 void freeMatrix(Matrix *m);
-void InitRandomMatrix(Matrix *matrix);
+void InitRandomMatrix(Matrix *matrix, double lower, double upper);
 void transpose(Matrix **m);
 void matrixAdd(Matrix matrix, Matrix a, Matrix *res);
 void copyMatrix(Matrix src, Matrix *dest);
@@ -43,3 +43,5 @@ Matrix *allocateMatrix(int rows, int columns);
 bool cmpMatrix(Matrix m1, Matrix m2);
 void hadamard_prod(Matrix m1, Matrix m2, Matrix* res);
 void matrixSubtract(Matrix matrix, Matrix a, Matrix *res);
+
+void reLu_matrix(Matrix *m);

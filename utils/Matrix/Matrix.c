@@ -36,6 +36,22 @@ static void free2Darray(double **arr, int rows, int columns);
 //     }
 // }
 
+void reLu_matrix(Matrix *m)
+{
+    int r;
+    int c;
+    for(r = 0; r < m->rows; r++)
+    {
+        for(c = 0; c < m->columns; c++)
+        {
+	    if(m->data[r][c] < 0)
+	    {
+            	m->data[r][c] = 0;
+	    }
+        }
+    }
+}
+
 void print_matrix(Matrix m)
 {
     int M = m.columns;
@@ -229,11 +245,15 @@ void fillMatrix(Matrix *matrix, double *data)
     }
 }
 
-void InitRandomMatrix(Matrix *matrix)
+void InitRandomMatrix(Matrix *matrix, double lower, double upper)
 {
     //allocMatrix(matrix);
+    assert(lower < upper);
+    assert(abs(upper - lower) > RAND_MAX)
+
     int r;
     int c;
+
     for(r = 0; r < matrix->rows; r++)
     {
         for(c = 0; c < matrix->columns; c++)

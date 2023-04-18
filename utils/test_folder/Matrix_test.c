@@ -24,9 +24,9 @@ void test_createMatrix(void)
 
 void test_matrixAdd(void)
 {
-    struct Matrix *m = allocateMatrix(2, 2);
-    struct Matrix *a = allocateMatrix(2, 2);
-    struct Matrix *res = allocateMatrix(2,2);
+    Matrix *m = allocateMatrix(2, 2);
+    Matrix *a = allocateMatrix(2, 2);
+    Matrix *res = allocateMatrix(2,2);
 
     double data[2][2] = {{1,2},{3,4}};
     fillMatrix(a, *data);
@@ -51,9 +51,9 @@ void test_matrixAdd(void)
 
 void test_matrixAdd_EqualRow(void)
 {
-    struct Matrix *m = allocateMatrix(2, 4);
-    struct Matrix *a = allocateMatrix(2, 1);
-    struct Matrix *res = allocateMatrix(2,4);
+    Matrix *m = allocateMatrix(2, 4);
+    Matrix *a = allocateMatrix(2, 1);
+    Matrix *res = allocateMatrix(2,4);
 
     double data[2][1] = {{1},{2}};
     fillMatrix(a, *data);
@@ -77,9 +77,9 @@ void test_matrixAdd_EqualRow(void)
 
 void test_matrixAdd_EqualColumn(void)
 {
-    struct Matrix *m = allocateMatrix(2, 4);
-    struct Matrix *a = allocateMatrix(1, 4);
-    struct Matrix *res = allocateMatrix(2,4);
+    Matrix *m = allocateMatrix(2, 4);
+    Matrix *a = allocateMatrix(1, 4);
+    Matrix *res = allocateMatrix(2,4);
 
     double data[1][4] = {{1,2,3,4}};
     fillMatrix(a, *data);
@@ -103,9 +103,9 @@ void test_matrixAdd_EqualColumn(void)
 
 void test_matrixAdd_addConst(void)
 {
-    struct Matrix *m = allocateMatrix(2, 4);
-    struct Matrix *a = allocateMatrix(1, 1);
-    struct Matrix *res = allocateMatrix(2,4);
+    Matrix *m = allocateMatrix(2, 4);
+    Matrix *a = allocateMatrix(1, 1);
+    Matrix *res = allocateMatrix(2,4);
 
     double data[1][1] = {{5}};
     fillMatrix(a, *data);
@@ -129,9 +129,9 @@ void test_matrixAdd_addConst(void)
 
 void test_matrixSubtract(void)
 {
-    struct Matrix *m = allocateMatrix(2, 2);
-    struct Matrix *a = allocateMatrix(2, 2);
-    struct Matrix *res = allocateMatrix(2, 2);
+    Matrix *m = allocateMatrix(2, 2);
+    Matrix *a = allocateMatrix(2, 2);
+    Matrix *res = allocateMatrix(2, 2);
 
     double data[2][2] = {{1,2},{3,4}};
     fillMatrix(a, *data);
@@ -155,9 +155,9 @@ void test_matrixSubtract(void)
 
 void test_matrixSubtract_EqualRow(void)
 {
-    struct Matrix *m = allocateMatrix(2, 4);
-    struct Matrix *a = allocateMatrix(2, 1);
-    struct Matrix *res = allocateMatrix(2,4);
+    Matrix *m = allocateMatrix(2, 4);
+    Matrix *a = allocateMatrix(2, 1);
+    Matrix *res = allocateMatrix(2,4);
 
     double data[2][1] = {{1},{2}};
     fillMatrix(a, *data);
@@ -181,9 +181,9 @@ void test_matrixSubtract_EqualRow(void)
 
 void test_matrixSubtract_EqualColumn(void)
 {
-    struct Matrix *m = allocateMatrix(2, 4);
-    struct Matrix *a = allocateMatrix(1, 4);
-    struct Matrix *res = allocateMatrix(2,4);
+    Matrix *m = allocateMatrix(2, 4);
+    Matrix *a = allocateMatrix(1, 4);
+    Matrix *res = allocateMatrix(2,4);
 
     double data[1][4] = {{1,2,3,4}};
     fillMatrix(a, *data);
@@ -207,9 +207,9 @@ void test_matrixSubtract_EqualColumn(void)
 
 void test_matrixSubtract_addConst(void)
 {
-    struct Matrix *m = allocateMatrix(2, 4);
-    struct Matrix *a = allocateMatrix(1, 1);
-    struct Matrix *res = allocateMatrix(2,4);
+    Matrix *m = allocateMatrix(2, 4);
+    Matrix *a = allocateMatrix(1, 1);
+    Matrix *res = allocateMatrix(2,4);
 
     double data[1][1] = {{5}};
     fillMatrix(a, *data);
@@ -233,7 +233,7 @@ void test_matrixSubtract_addConst(void)
 
 void tests_transposeMatrix_2x4(void)
 {
-    struct Matrix *m = allocateMatrix(2, 4);
+    Matrix *m = allocateMatrix(2, 4);
 
     double data[2][4] = {{1,3,5,7},{2,4,6,8}};
 
@@ -256,7 +256,7 @@ void tests_transposeMatrix_2x4(void)
 
 void tests_transposeMatrix_2x2(void)
 {
-    struct Matrix *m = allocateMatrix(2, 2);
+    Matrix *m = allocateMatrix(2, 2);
 
     double data[2][2] = {{1,2},{3,4}};
 
@@ -280,7 +280,7 @@ void tests_transposeMatrix_2x2(void)
 void test_eyeMatrix(void)
 {
 
-    struct Matrix *m = allocateMatrix(4, 4);
+    Matrix *m = allocateMatrix(4, 4);
     eye(m);
     double expected[][4] = {{1,0,0,0},
                             {0,1,0,0},
@@ -301,8 +301,8 @@ void test_eyeMatrix(void)
 
 void test_swapMatrix(void)
 {
-    struct Matrix *m1 = allocateMatrix(4,4);
-    struct Matrix *m2 = allocateMatrix(4,4);
+    Matrix *m1 = allocateMatrix(4,4);
+    Matrix *m2 = allocateMatrix(4,4);
     InitRandomMatrix(m1);
 
     int r;
@@ -331,9 +331,9 @@ void test_swapMatrix(void)
 
 void test_matrixDot_2x2(void)
 {
-    struct Matrix *m1 = allocateMatrix(2,2);
-    struct Matrix *m2 = allocateMatrix(2,2);
-    struct Matrix *res = allocateMatrix(2,2);
+    Matrix *m1 = allocateMatrix(2,2);
+    Matrix *m2 = allocateMatrix(2,2);
+    Matrix *res = allocateMatrix(2,2);
 
     double data[2][2] = {   {3.5, 2.3},
                             {8.9, 9.5},   };
@@ -365,9 +365,9 @@ void test_matrixDot_2x2(void)
 
 void test_matrixDot_2x4(void)
 {
-    struct Matrix *m1 = allocateMatrix(2,2);
-    struct Matrix *m2 = allocateMatrix(2,4);
-    struct Matrix *res = allocateMatrix(2,4);
+    Matrix *m1 = allocateMatrix(2,2);
+    Matrix *m2 = allocateMatrix(2,4);
+    Matrix *res = allocateMatrix(2,4);
 
     double data[2][2] = {   {3.5, 2.3},
                             {8.9, 9.5},   };
@@ -399,8 +399,8 @@ void test_matrixDot_2x4(void)
 
 void test_matrixDot_1x1(void)
 {
-    struct Matrix *m1 = allocateMatrix(1,4);
-    struct Matrix *m2 = allocateMatrix(4,1);
+    Matrix *m1 = allocateMatrix(1,4);
+    Matrix *m2 = allocateMatrix(4,1);
     double res;
 
     double data[1][4] = {   {3.5, 2.3, 8.9, 9.5} };
@@ -424,9 +424,9 @@ void test_matrixDot_1x1(void)
 
 void test_matrixDot_4x4(void)
 {
-    struct Matrix *m1 = allocateMatrix(4,2);
-    struct Matrix *m2 = allocateMatrix(2,4);
-    struct Matrix *res = allocateMatrix(4,4);
+    Matrix *m1 = allocateMatrix(4,2);
+    Matrix *m2 = allocateMatrix(2,4);
+    Matrix *res = allocateMatrix(4,4);
 
     double data[4][2] = {  { 5.3, 3.5 },
                             { 6.2, 6.7 },
@@ -462,9 +462,9 @@ void test_matrixDot_4x4(void)
 
 void test_hadamardProd_2x2(void)
 {
-    struct Matrix *m1 = allocateMatrix(2,2);
-    struct Matrix *m2 = allocateMatrix(2,2);
-    struct Matrix *res = allocateMatrix(2,2);
+    Matrix *m1 = allocateMatrix(2,2);
+    Matrix *m2 = allocateMatrix(2,2);
+    Matrix *res = allocateMatrix(2,2);
 
     double data[2][2] = {   { 5.3, 3.5 },
                             { 6.2, 6.7 },   };
@@ -496,9 +496,9 @@ void test_hadamardProd_2x2(void)
 
 void test_hadamardProd_1x2(void)
 {
-    struct Matrix *m1 = allocateMatrix(1,2);
-    struct Matrix *m2 = allocateMatrix(1,2);
-    struct Matrix *res = allocateMatrix(1,2);
+    Matrix *m1 = allocateMatrix(1,2);
+    Matrix *m2 = allocateMatrix(1,2);
+    Matrix *res = allocateMatrix(1,2);
 
     double data[1][2] = {   { 5.3, 3.5 }  };
 
@@ -527,8 +527,8 @@ void test_hadamardProd_1x2(void)
 
 void tests_compareMatrix(void)
 {
-    struct Matrix *m1 = allocateMatrix(2,2);
-    struct Matrix *m2 = allocateMatrix(2,2);
+    Matrix *m1 = allocateMatrix(2,2);
+    Matrix *m2 = allocateMatrix(2,2);
 
     double data[2][2] = {   { 5.3, 3.5 },
                             { 6.2, 6.7 },   };
@@ -560,6 +560,42 @@ void tests_compareMatrix(void)
     freeMatrix(m2);
 }
 
+void test_relu_matrix(void)
+{
+    Matrix *m1 = allocateMatrix(2,2);
+    Matrix *m2 = allocateMatrix(2,2);
+    Matrix *e_m1 = allocateMatrix(2,2);
+    Matrix *e_m2 = allocateMatrix(2,2);
+
+
+    double data[2][2] = {   { 5.3, -3.5 },
+                            { -6.2, 0.0 },   };
+
+    double data2[2][2] = {  { -5.3, 3.5 },
+                            { 6.2, -6.7 },   };
+
+     double exp[2][2] = {   { 5.3, 0.0 },
+                            { 0.0, 0.0 },   };
+
+    double exp2[2][2] = {  { 0.0, 3.5 },
+                            { 6.2, 0.0 },   };
+    fillMatrix(m1, *data);
+    fillMatrix(m2, *data2);
+    fillMatrix(e_m1, *exp);
+    fillMatrix(e_m2, *exp2);
+
+    reLu_matrix(m1);
+    reLu_matrix(m2);
+
+    CU_ASSERT_TRUE(cmpMatrix(*m1, *e_m1));
+    CU_ASSERT_TRUE(cmpMatrix(*m2, *e_m2));
+
+    freeMatrix(m1);
+    freeMatrix(m2);
+    freeMatrix(e_m1);
+    freeMatrix(e_m2);
+}
+
 static CU_TestInfo test_cases[] = {
     { "test_createMatrix", test_createMatrix },
     { "test_matrixAdd", test_matrixAdd },
@@ -581,6 +617,7 @@ static CU_TestInfo test_cases[] = {
     { "test_hadamardProd_2x2", test_hadamardProd_2x2 },
     { "test_hadamardProd_1x2", test_hadamardProd_1x2 },
     { "tests_compareMatrix", tests_compareMatrix },
+    { "test_relu_matrix", test_relu_matrix },
 
     CU_TEST_INFO_NULL,
 };
