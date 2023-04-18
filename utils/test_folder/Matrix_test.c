@@ -6,7 +6,7 @@
 
 void test_createMatrix(void) 
 {
-    struct Matrix *m;
+    Matrix *m;
     m = allocateMatrix(2, 2);
 
     CU_ASSERT_PTR_NOT_NULL(m);

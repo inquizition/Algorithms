@@ -24,22 +24,22 @@ struct Node {
     struct Node *next;
 };
 
-void zeros(struct Matrix *matrix);
-void fillMatrix(struct Matrix *matrix, double *data);
-void eye(struct Matrix *matrix);
-void dot(struct Matrix m1, struct Matrix m2, union Result *res);
-void ones(struct Matrix *matrix);
-void matMult(struct Matrix m1, struct Matrix m2, struct Matrix *res);
+void zeros(Matrix *matrix);
+void fillMatrix(Matrix *matrix, double *data);
+void eye(Matrix *matrix);
+void dot(Matrix m1, Matrix m2, union Result *res);
+void ones(Matrix *matrix);
+void matMult(Matrix m1, Matrix m2, Matrix *res);
 double vectorMult(double *v1, double *v2, int length);
-void print_matrix(struct Matrix m);
+void print_matrix(Matrix m);
 
-void freeMatrix(struct Matrix *m);
-void InitRandomMatrix(struct Matrix *matrix);
-void transpose(struct Matrix **m);
-void matrixAdd(struct Matrix matrix, struct Matrix a, struct Matrix *res);
-void copyMatrix(struct Matrix src, struct Matrix *dest);
+void freeMatrix(Matrix *m);
+void InitRandomMatrix(Matrix *matrix);
+void transpose(Matrix **m);
+void matrixAdd(Matrix matrix, Matrix a, Matrix *res);
+void copyMatrix(Matrix src, Matrix *dest);
 
-struct Matrix *allocateMatrix(int rows, int columns);
-bool cmpMatrix(struct Matrix m1, struct Matrix m2);
-void hadamard_prod(struct Matrix m1, struct Matrix m2, struct Matrix* res);
-void matrixSubtract(struct Matrix matrix, struct Matrix a, struct Matrix *res);
+Matrix *allocateMatrix(int rows, int columns);
+bool cmpMatrix(Matrix m1, Matrix m2);
+void hadamard_prod(Matrix m1, Matrix m2, Matrix* res);
+void matrixSubtract(Matrix matrix, Matrix a, Matrix *res);
