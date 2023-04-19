@@ -5,3 +5,8 @@
 .mvenv/*
 *.wav
 Makefile
+*.o
+*.out
+*.dat
+*.gplot
+tags
