@@ -25,6 +25,17 @@ LM *InitLinear(int a, int b)
 	return model_ptr; 
 }
 
+void linear(LM *m, Matrix *input)
+{
+	if(m->output_init)
+	{
+		free(m->output);
+	}
+	m->ouput = allocateMatrix(input.rows, m->b.columns);
+
+
+}
+
 void forward(LM* linear)
 {
 
