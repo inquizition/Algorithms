@@ -52,8 +52,14 @@ void reLu_matrix(Matrix *m)
     }
 }
 
+void print_dim(Matrix m)
+{
+	printf("Dim = (r:%d, c:%d)\n", m.rows, m.columns);
+}
+
 void print_matrix(Matrix m)
 {
+	printf("hellu: r %d c %d", m.rows, m.columns);
     int M = m.columns;
     int N = m.rows;
     int r;
@@ -328,7 +334,7 @@ void dot(Matrix m1, Matrix m2, union Result *res)
     int c;
     int i;
 
-    if( (rows == 1) && (cols == 1) )
+    if( (rows == 1) && (cols == 1) && 0 )
     {
 	res->res = 0;
         for(c = 0; c < middle; c++)

@@ -8,12 +8,6 @@ typedef struct Matrix
     double **data;
 } Matrix;
 
-typedef struct Matrix_2
-{
-    int rows, columns;
-    double *data;
-} Matrix_2;
-
 union Result {
     struct Matrix m;
     double res;
@@ -32,6 +26,7 @@ void ones(Matrix *matrix);
 void matMult(Matrix m1, Matrix m2, Matrix *res);
 double vectorMult(double *v1, double *v2, int length);
 void print_matrix(Matrix m);
+void print_dim(Matrix m);
 
 void freeMatrix(Matrix *m);
 void InitRandomMatrix(Matrix *matrix);
