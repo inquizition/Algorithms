@@ -10,3 +10,4 @@ Makefile
 *.dat
 *.gplot
 tags
+*build/

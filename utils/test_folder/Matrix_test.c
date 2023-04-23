@@ -401,7 +401,7 @@ void test_matrixDot_1x1(void)
 {
     Matrix *m1 = allocateMatrix(1,4);
     Matrix *m2 = allocateMatrix(4,1);
-    double res;
+    Matrix *res = allocateMatrix(1,1);
 
     double data[1][4] = {   {3.5, 2.3, 8.9, 9.5} };
 
@@ -412,11 +412,10 @@ void test_matrixDot_1x1(void)
 
     fillMatrix(m1, *data);
     fillMatrix(m2, *data2);
-
-    dot(*m1, *m2, (union Result*)&res);
+    dot(*m1, *m2, (union Result*)res);
     double expected = 147.85;
 
-    CU_ASSERT_EQUAL((int)(10*res), (int)(10*expected));
+    CU_ASSERT_EQUAL((int)(10*res->data[0][0]), (int)(10*expected));
 
     freeMatrix(m1);
     freeMatrix(m2);

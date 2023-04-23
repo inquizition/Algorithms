@@ -334,31 +334,31 @@ void dot(Matrix m1, Matrix m2, union Result *res)
     int c;
     int i;
 
-    if( (rows == 1) && (cols == 1) && 0 )
-    {
-	res->res = 0;
-        for(c = 0; c < middle; c++)
-        {
-            res->res += m1.data[0][c] * m2.data[c][0];
-        }
-    }
-    else
-    {
-        assert(res->m.rows == rows);
-        assert(res->m.columns == cols);
+    //if( (rows == 1) && (cols == 1) && 0 )
+    //{
+    //    res->res = 0;
+    //    for(c = 0; c < middle; c++)
+    //    {
+    //        res->res += m1.data[0][c] * m2.data[c][0];
+    //    }
+    //}
+    //else
+    //{
+     assert(res->m.rows == rows);
+     assert(res->m.columns == cols);
 
-        for(r = 0; r < res->m.rows; r++)
-        {
-            for(c = 0; c < res->m.columns; c++)
-            {
-                for(i = 0; i < middle; i++)
-                {
-                    res->m.data[r][c] += m1.data[r][i] * m2.data[i][c];
-                }
-            }
-        }
+     for(r = 0; r < res->m.rows; r++)
+     {
+         for(c = 0; c < res->m.columns; c++)
+         {
+             for(i = 0; i < middle; i++)
+             {
+                 res->m.data[r][c] += m1.data[r][i] * m2.data[i][c];
+             }
+         }
+     }
 
-    }
+    //}
 }
 
 double vectorMult(double *v1, double *v2, int length)
