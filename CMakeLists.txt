@@ -17,13 +17,18 @@ cmake_minimum_required(VERSION 3.20)
  # TODO 2: Use add_subdirectory() to add MathFunctions to this project
  add_subdirectory(Bayesian/VAE/Models)
  add_subdirectory(utils/Matrix)
+ add_subdirectory(utils/cunit/CUnit)
  # add the executable
  add_executable(main main.c)
 
  # TESTS
  add_executable(MatrixTest utils/test_folder/Matrix_test.c)
- target_link_libraries(MatrixTest MatrixFunctions)
+ target_link_libraries(MatrixTest PUBLIC MatrixFunctions PRIVATE cunit)
+ # target_link_libraries(MatrixTest PUBLIC cunit)
  add_test(Matrix_test2 MatrixTest) 
+ target_include_directories(MatrixTest PUBLIC
+		 "${PROJECT_BINARY_DIR}"
+		 "${PROJECT_SOURCE_DIR}/utils/Matrix")
  
  
  # TODO 9: Use EXTRA_LIBS instead of the MathFunctions specific values
