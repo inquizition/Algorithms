@@ -11,16 +11,26 @@ void test_createMatrix(void)
 	Matrix *input = allocateMatrix(1,4);
 	Matrix *expected = allocateMatrix(4,4);
     	
-	double expected_data[4][4] = {{-8,-8,-8,-8},{-2,-2,-2,-2},{-1,-1,-1,-1},{-2,-2,-2,-2}};
+	double expected_data[4][4] = {{-8,-8,-8,-8},{-4,-4,-4,-4},{4,4,4,4},{8,8,8,8}};
 	fillMatrix(expected, *expected_data);
 	double data[1][4] = {{-2, -1, 1, 2}};
-    	fillMatrix(input, *data);
+   	fillMatrix(input, *data);
 	transpose(&input);
 
 	Linear(linear, input);
 	
 	print_matrix(*linear->output);
-
+	
+	int r;
+	int c;
+    for(r = 0; r < linear->output->rows; r++)
+    {
+        for(c = 0; c < linear->output->columns; c++)
+        {
+            CU_ASSERT_EQUAL(linear->output->data[r][c], expected->data[r][c]);
+        }
+    }
+	
 	freeLinear(linear);
 	freeMatrix(input);
 	freeMatrix(expected);
