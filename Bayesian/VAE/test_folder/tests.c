@@ -55,7 +55,7 @@ void test_init_linear(void)
 
 static CU_TestInfo test_cases[] = {
     { "test_createMatrix", test_createMatrix },
-    { "test_matrixAdd", test_matrixAdd },
+    { "test_init_linear", test_init_linear },
     CU_TEST_INFO_NULL,
 };
 

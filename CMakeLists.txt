@@ -21,7 +21,7 @@ cmake_minimum_required(VERSION 3.20)
  # add the executable
  add_executable(main main.c)
 
- # TESTS
+ # TESTS MATRIX
  add_executable(MatrixTest utils/test_folder/Matrix_test.c)
  target_link_libraries(MatrixTest PUBLIC MatrixFunctions PRIVATE cunit)
  # target_link_libraries(MatrixTest PUBLIC cunit)
@@ -30,7 +30,19 @@ cmake_minimum_required(VERSION 3.20)
 		 "${PROJECT_BINARY_DIR}"
 		 "${PROJECT_SOURCE_DIR}/utils/Matrix")
  
+
+ # TESTS MODELS
+ add_executable(ModelsTest Bayesian/VAE/test_folder/tests.c)
+ target_link_libraries(ModelsTest PUBLIC MatrixFunctions PUBLIC LinearModelFunctions PRIVATE cunit)
+ # target_link_libraries(MatrixTest PUBLIC cunit)
+ add_test(Models_test ModelsTest) 
+ target_include_directories(ModelsTest PUBLIC
+		 "${PROJECT_BINARY_DIR}"
+		 "${PROJECT_SOURCE_DIR}/utils/Matrix"
+		 "${PROJECT_SOURCE_DIR}/Bayesian/VAE/Models")
  
+
+
  # TODO 9: Use EXTRA_LIBS instead of the MathFunctions specific values
  # in target_link_libraries.
   
