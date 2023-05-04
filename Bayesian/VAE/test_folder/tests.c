@@ -19,8 +19,6 @@ void test_createMatrix(void)
 
 	Linear(linear, input);
 	
-	print_matrix(*linear->output);
-	
 	int r;
 	int c;
     for(r = 0; r < linear->output->rows; r++)

@@ -13,9 +13,6 @@ LM *InitLinear(int a, int b)
 	model_ptr->A = allocateMatrix(a, b);
 	model_ptr->b = allocateMatrix(b,1);
 #ifdef TEST
-	printf("InitLinear \n");
-	print_dim(*model_ptr->A);
-	print_dim(*model_ptr->b);
 	ones(model_ptr->A);
 	ones(model_ptr->b);
 #else
@@ -29,7 +26,6 @@ LM *InitLinear(int a, int b)
 
 void Linear(LM *m, Matrix *input)
 {	
-	printf("Linear \n");
 	if(m->output_init)
 	{
 		free(m->output);
@@ -39,9 +35,6 @@ void Linear(LM *m, Matrix *input)
 	Matrix *res_temp = allocateMatrix(input->rows, m->A->columns);
 	ones(ones_temp);
 
-	print_dim(*ones_temp);
-	print_dim(*res_temp);
-	print_dim(*m->output);
 	dot(*input, *ones_temp, (union Result *)res_temp);
 	matMult(*res_temp, *m->A, m->output);
 	m->output_init = true;	

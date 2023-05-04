@@ -17,6 +17,7 @@ struct Node {
     struct Matrixt *ptr;
     struct Node *next;
 };
+//linus är en liten sötknopp
 
 void zeros(Matrix *matrix);
 void fillMatrix(Matrix *matrix, double *data);
