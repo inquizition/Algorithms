@@ -36,6 +36,32 @@ static void free2Darray(double **arr, int rows, int columns);
 //     }
 // }
 
+void exp_matrix(Matrix *m)
+{
+	int r;
+	int c;
+    for(r = 0; r < m->rows; r++)
+    {
+        for(c = 0; c < m->columns; c++)
+        {
+           	m->data[r][c] = exp(m->data[r][c]);
+        }
+    }
+}
+
+void const_mult_matrix(Matrix *m, double c)
+{
+	int r;
+    int c;
+    for(r = 0; r < m->rows; r++)
+    {
+        for(c = 0; c < m->columns; c++)
+        {
+            m->data[r][c] = m->data[r][c] * c;
+        }
+    }
+}
+
 void reLu_matrix(Matrix *m)
 {
     int r;

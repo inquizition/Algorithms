@@ -9,3 +9,4 @@ typedef struct
 	Matrix* logsigma2;
 }NLM;
 
+static void decode(NLM model, Matrix *res, Matrix *z);
