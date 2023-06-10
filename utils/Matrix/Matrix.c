@@ -36,6 +36,19 @@ static void free2Darray(double **arr, int rows, int columns);
 //     }
 // }
 
+void matrix_pow(Matrix *m, int power)
+{
+    int r;
+    int c;
+    for(r = 0; r < m->rows; r++)
+    {
+        for(c = 0; c < m->columns; c++)
+        {
+           	m->data[r][c] = pow(m->data[r][c], power);
+        }
+    }
+
+}
 void exp_matrix(Matrix *m)
 {
 	int r;
@@ -454,4 +467,21 @@ void hadamard_prod(Matrix m1, Matrix m2, Matrix* res)
             res->data[r][c] += m1.data[r][c] * m2.data[r][c];
         }
     }
+}
+
+double matrix_sum(Matrix *m)
+{
+    double res;
+    int r;
+    int c;
+
+    for(r = 0; r < m1.rows; r++)
+    {
+        for(c = 0; c < m1.columns; c++)
+        {
+            res += m->data[r][c];
+        }
+    }
+
+    return res;
 }
