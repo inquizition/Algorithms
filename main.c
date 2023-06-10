@@ -36,29 +36,29 @@ int main(void)
 
 	Matrix *mat_img = allocateMatrix(28,28);
 	fillMatrix(mat_img, norm_img);
-	//print_matrix(*mat_img);
+	print_matrix(*mat_img);
 
 	NLM *non_linear_model = InitNLM(2, 400, 784);
-	cost_function(norm_img,non_linear_model, 1);
+	cost_function(mat_img, non_linear_model, 1);
 	freeNonLinear(non_linear_model);
 	freeMatrix(mat_img);
 
-//	printf("Start application.\n");
+	//printf("Start application.\n");
 
-//	LM *linear = InitLinear(4,4);
-//	Matrix *input = allocateMatrix(1,4);
-//	double data[1][4] = {{-2, -1, 1, 2}};
-//	//double data[1][1] = {{2}};
-//    	fillMatrix(input, *data);
-//	transpose(&input);
-//
-//	Linear(linear, input);
-//	
-//	print_matrix(*linear->output);
-//
-//	freeLinear(linear);
-//	freeMatrix(input);
-//
-//	printf("Application end.\n");
-//	return 1;
+	//LM *linear = InitLinear(4,4);
+	//Matrix *input = allocateMatrix(1,4);
+	//double data[1][4] = {{-2, -1, 1, 2}};
+	////double data[1][1] = {{2}};
+    //	fillMatrix(input, *data);
+	//transpose(&input);
+
+	//Linear(linear, input);
+	//
+	//print_matrix(*linear->output);
+
+	//freeLinear(linear);
+	//freeMatrix(input);
+
+	//printf("Application end.\n");
+	return 1;
 }

@@ -21,6 +21,8 @@ cmake_minimum_required(VERSION 3.20)
  # add the executable
  add_executable(main main.c)
 
+ set(CMAKE_C_FLAGS "-Og -g3")
+
  # TESTS MATRIX
  add_executable(MatrixTest utils/test_folder/Matrix_test.c)
  target_link_libraries(MatrixTest PUBLIC MatrixFunctions PRIVATE cunit)

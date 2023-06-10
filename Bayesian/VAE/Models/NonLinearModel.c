@@ -14,10 +14,13 @@ NLM *InitNLM(int a, int b, int c)
 	model->decoder_fc1 = InitLinear(a,b); // 2, 400
 	model->decoder_fc2 = InitLinear(b, c); // 400, 784
 	model->logsigma2 = allocateMatrix(1,1);
+	model->output_init = false;
+	return model;
 }
 
 void decode(NLM model, Matrix *z)
 {
+	transpose(&z);	
 	Linear(model.decoder_fc1, z);
 	reLu_matrix(model.decoder_fc1->output);
 	Linear(model.decoder_fc2, model.decoder_fc1->output);
@@ -28,17 +31,25 @@ void sample_decode(NLM *model, int k)
 	Matrix *z = allocateMatrix(k, 2);
 	InitRandomMatrix(z);
 	decode(*model, z);
+	freeMatrix(z);
 }
 
 void cost_function(Matrix *X, NLM *model, int K)
 {
 	// compute y with y[j, i] = -1/(2 * sigma_theta^2) * || x_j - mu_theta(z_i)) ||^2_2
+	printf("a");
 	sample_decode(model, K);
+	printf("a");
 	Matrix *y = allocateMatrix(model->logsigma2->rows, model->logsigma2->columns);
+	printf("a");
 	Matrix *logsigma1 = allocateMatrix(model->decoder_fc2->output->rows, model->decoder_fc2->output->columns);
+	printf("a");
 	Matrix *logsigma2 = allocateMatrix(model->decoder_fc2->output->rows, model->decoder_fc2->output->columns);
+	printf("a");
 	copyMatrix(*model->decoder_fc2->output, logsigma1);
+	printf("a");
 	copyMatrix(*model->decoder_fc2->output, logsigma2);
+	printf("a");
 
 	const_mult_matrix(logsigma1, -1.0);
 	exp_matrix(logsigma1);

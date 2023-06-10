@@ -1,3 +1,4 @@
+ set(CMAKE_C_FLAGS "-Og -g3")
 add_library(ModelFunctions LinearModel.c NonLinearModel.c)
 
 if(POLICY CMP0079)
