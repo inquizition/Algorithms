@@ -62,7 +62,7 @@ void exp_matrix(Matrix *m)
     }
 }
 
-void const_mult_matrix(Matrix *m, double c)
+void const_mult_matrix(Matrix *m, double C)
 {
 	int r;
     int c;
@@ -70,7 +70,7 @@ void const_mult_matrix(Matrix *m, double c)
     {
         for(c = 0; c < m->columns; c++)
         {
-            m->data[r][c] = m->data[r][c] * c;
+            m->data[r][c] = m->data[r][c] * C;
         }
     }
 }
@@ -475,9 +475,9 @@ double matrix_sum(Matrix *m)
     int r;
     int c;
 
-    for(r = 0; r < m1.rows; r++)
+    for(r = 0; r < m->rows; r++)
     {
-        for(c = 0; c < m1.columns; c++)
+        for(c = 0; c < m->columns; c++)
         {
             res += m->data[r][c];
         }

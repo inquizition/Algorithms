@@ -1,13 +1,23 @@
 #include "stdint.h"
+#include "stdio.h"
 
-void VAE()
+#define SIZE 5000;
+//void VAE()
 
-static encode( float x )
+int main()
 {
-
-}
-
-static decode( float z )
-{
-    
+	FILE *file;
+	int img[SIZE];
+	
+	file = fopen("data/img.bin", "rb");
+	fread(img, sizeof(int), SIZE, file);
+	fclose(file);
+	
+	int i;
+	for(i = 0; i < SIZE; i++)
+	{
+	   printf("d%\n", img[i]);
+	}
+	
+	return 1;
 }
