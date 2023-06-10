@@ -47,8 +47,10 @@ cmake_minimum_required(VERSION 3.20)
  # in target_link_libraries.
   
  # TODO 3: Use target_link_libraries to link the library to our executable
- target_link_libraries(LinearModelFunctions PUBLIC MatrixFunctions)
- target_link_libraries(main PUBLIC MatrixFunctions PUBLIC LinearModelFunctions)
+ # target_link_libraries(LinearModelFunctions PUBLIC MatrixFunctions)
+ #target_link_libraries(NonLinearModelFunctions PUBLIC LinearModelFunctions PUBLIC MatrixFunctions)
+ #target_link_libraries(main PUBLIC MatrixFunctions PUBLIC LinearModelFunctions PUBLIC NonLinearModelFunctions m)
+ target_link_libraries(main PUBLIC MatrixFunctions PUBLIC ModelFunctions m)
   
  # TODO 4: Add MathFunctions to Tutorial's target_include_directories()
  # Hint: ${PROJECT_SOURCE_DIR} is a path to the project source. AKA This folder!

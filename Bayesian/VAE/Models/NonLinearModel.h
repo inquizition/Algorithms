@@ -1,6 +1,4 @@
 // Non linear model
-#include "LinearModel.h"
-
 typedef struct
 {
 	bool output_init;
@@ -9,4 +7,8 @@ typedef struct
 	Matrix* logsigma2;
 }NLM;
 
-static void decode(NLM model, Matrix *res, Matrix *z);
+NLM *InitNLM(int a, int b, int c);
+
+void freeNonLinear(NLM *nonLinear);
+void cost_function(Matrix *X, NLM *model, int K);
+void decode(NLM model, Matrix *z);
