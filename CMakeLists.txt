@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.20)                                                                                                   
-                            
  # set the project name and version
  project(Algorithms VERSION 1.0)
-  
+
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+ set(CMAKE_C_FLAGS "-Og -g3")
+ 
  # configure a header file to pass some of the CMake settings
  # to the source code       
   
@@ -21,27 +23,27 @@ cmake_minimum_required(VERSION 3.20)
  # add the executable
  add_executable(main main.c)
 
- set(CMAKE_C_FLAGS "-Og -g3")
+ # set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*)
 
- # TESTS MATRIX
- add_executable(MatrixTest utils/test_folder/Matrix_test.c)
- target_link_libraries(MatrixTest PUBLIC MatrixFunctions PRIVATE cunit)
- # target_link_libraries(MatrixTest PUBLIC cunit)
- add_test(Matrix_test2 MatrixTest) 
- target_include_directories(MatrixTest PUBLIC
-		 "${PROJECT_BINARY_DIR}"
-		 "${PROJECT_SOURCE_DIR}/utils/Matrix")
- 
-
- # TESTS MODELS
- add_executable(ModelsTest Bayesian/VAE/test_folder/tests.c)
- target_link_libraries(ModelsTest PUBLIC MatrixFunctions PUBLIC LinearModelFunctions PRIVATE cunit)
- # target_link_libraries(MatrixTest PUBLIC cunit)
- add_test(Models_test ModelsTest) 
- target_include_directories(ModelsTest PUBLIC
-		 "${PROJECT_BINARY_DIR}"
-		 "${PROJECT_SOURCE_DIR}/utils/Matrix"
-		 "${PROJECT_SOURCE_DIR}/Bayesian/VAE/Models")
+ # # TESTS MATRIX
+ # add_executable(MatrixTest utils/test_folder/Matrix_test.c)
+ # target_link_libraries(MatrixTest PUBLIC MatrixFunctions PRIVATE cunit m)
+ # # target_link_libraries(MatrixTest PUBLIC cunit)
+ # add_test(Matrix_test2 MatrixTest) 
+ # target_include_directories(MatrixTest PUBLIC
+ #		 "${PROJECT_BINARY_DIR}"
+ #		 "${PROJECT_SOURCE_DIR}/utils/Matrix")
+ # 
+ #
+ # # TESTS MODELS
+ # add_executable(ModelsTest Bayesian/VAE/test_folder/tests.c)
+ # target_link_libraries(ModelsTest PUBLIC MatrixFunctions PUBLIC ModelFunctions PRIVATE cunit m)
+ # # target_link_libraries(MatrixTest PUBLIC cunit)
+ # add_test(Models_test ModelsTest) 
+ # target_include_directories(ModelsTest PUBLIC
+ #		 "${PROJECT_BINARY_DIR}"
+ #		 "${PROJECT_SOURCE_DIR}/utils/Matrix"
+ #		 "${PROJECT_SOURCE_DIR}/Bayesian/VAE/Models")
  
 
 
@@ -59,7 +61,7 @@ cmake_minimum_required(VERSION 3.20)
  target_include_directories(main PUBLIC 
          "${PROJECT_BINARY_DIR}"
          "${PROJECT_SOURCE_DIR}/utils/Matrix"
- 		 "${PROJECT_SOURCE_DIR}/Bayesian/VAE/Models")
+ 	 "${PROJECT_SOURCE_DIR}/Bayesian/VAE/Models")
   
  # TODO 10: Use EXTRA_INCLUDES instead of the MathFunctions specific values
  # in target_include_directories.

@@ -26,12 +26,13 @@ LM *InitLinear(int a, int b)
 
 void Linear(LM *m, Matrix *input)
 {	
-	printf("Attempting Linear transformation.\n");
+	//printf("Attempting Linear transformation.\n");
 	if(m->output_init)
 	{
 		free(m->output);
 	}
 	m->output = allocateMatrix(input->rows, m->A->columns);
+	m->output_init = true;	
 	Matrix *ones_temp = allocateMatrix(input->columns, m->A->columns);
 	Matrix *res_temp = allocateMatrix(input->rows, m->A->columns);
 	Matrix *A_T = allocateMatrix(m->A->rows, m->A->columns);
@@ -40,20 +41,19 @@ void Linear(LM *m, Matrix *input)
 	transpose(&A_T);
 	ones(ones_temp);
 	
-	printf("input: ");
-	print_dim(*input);
-	printf("ones_temp: ");
-	print_dim(*ones_temp);
-	printf("Res_temp: ");
-	print_dim(*res_temp);
-	printf("output: ");
-	print_dim(*res_temp);
-	printf("A_T: ");
-	print_dim(*A_T);
+	//printf("input: ");
+	//print_dim(*input);
+	//printf("ones_temp: ");
+	//print_dim(*ones_temp);
+	//printf("Res_temp: ");
+	//print_dim(*res_temp);
+	//printf("output: ");
+	//print_dim(*res_temp);
+	//printf("A_T: ");
+	//print_dim(*A_T);
 
 	dot(*input, *ones_temp, (union Result *)res_temp);
 	matMult(*res_temp, *A_T, m->output);
-	m->output_init = true;	
 
 	freeMatrix(ones_temp);
 	freeMatrix(res_temp);
