@@ -36,27 +36,44 @@ void cost_function(Matrix *X, NLM *model, int K)
 {
 	// compute y with y[j, i] = -1/(2 * sigma_theta^2) * || x_j - mu_theta(z_i)) ||^2_2
 	sample_decode(model, K);
-	Matrix *y = allocateMatrix(model->logsigma2->rows, model->logsigma2->columns);
-	Matrix *logsigma1 = allocateMatrix(model->decoder_fc2->output->rows, model->decoder_fc2->output->columns);
-	Matrix *logsigma2 = allocateMatrix(model->decoder_fc2->output->rows, model->decoder_fc2->output->columns);
+	Matrix *y = allocateMatrix(
+				model->logsigma2->rows, 
+				model->logsigma2->columns);
+	Matrix *mu = allocateMatrix(
+				model->decoder_fc2->output->rows, 
+				model->decoder_fc2->output->columns);
+
+	Matrix *logsigma1 = allocateMatrix(
+				model->decoder_fc2->output->rows, 
+				model->decoder_fc2->output->columns);
+	Matrix *logsigma2 = allocateMatrix(
+				model->decoder_fc2->output->rows, 
+				model->decoder_fc2->output->columns);
+	Matrix *res = allocateMatrix(
+				model->decoder_fc2->output->rows, 
+				model->decoder_fc2->output->columns);
+	
 	copyMatrix(*model->decoder_fc2->output, logsigma1);
 	copyMatrix(*model->decoder_fc2->output, logsigma2);
-
-	print_matrix(*logsigma1);
-	print_matrix(*logsigma2);
-
+	
+	print_matrix(*logsigma1, "logsigma1");
+	
 	const_mult_matrix(logsigma1, -1.0);
-	print_matrix(*logsigma1);
 	exp_matrix(logsigma1);
-	print_matrix(*logsigma1);
 	const_mult_matrix(logsigma1, -0.5);
-	print_matrix(*logsigma1);
+	
+	print_matrix(*logsigma1, "1st");
+
+	matrixSubtract(*X, *logsigma2, res);
+	print_matrix(*res, "2nd");
 
 	//matrix_pow(logsigma2);
 	double a = matrix_sum(logsigma2);
 	printf("a: %f\n", a);
 
 	freeMatrix(y);
+	freeMatrix(mu);
+	freeMatrix(res);
 	freeMatrix(logsigma1);
 	freeMatrix(logsigma2);
 }

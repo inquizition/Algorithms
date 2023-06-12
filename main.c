@@ -4,6 +4,7 @@
 #include "stdlib.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include <time.h>
 
 // Run by typing: cd build
 // cmake ..
@@ -13,6 +14,7 @@
 
 int main(void)
 {
+	srand ( time(NULL) );
 	FILE *file;
 	int img[SIZE];
 	double norm_img[28*28];
@@ -20,7 +22,6 @@ int main(void)
 	file = fopen("data/img.bin", "rb");
 	fread(img, sizeof(int), SIZE, file);
 	fclose(file);
-
 	
 	int i;
 	int j;

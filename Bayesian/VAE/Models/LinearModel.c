@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define TEST 1
+//#define TEST
 
 LM *InitLinear(int a, int b)
 {

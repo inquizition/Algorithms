@@ -97,9 +97,9 @@ void print_dim(Matrix m)
 	printf("Dim = (r:%d, c:%d)\n", m.rows, m.columns);
 }
 
-void print_matrix(Matrix m)
+void print_matrix(Matrix m, char* header)
 {
-	printf("hellu: r %d c %d", m.rows, m.columns);
+	printf("%s: r %d c %d", header, m.rows, m.columns);
     int M = m.columns;
     int N = m.rows;
     int r;
@@ -297,13 +297,15 @@ void InitRandomMatrix(Matrix *matrix)
 
     int r;
     int c;
+    double random_number = 0.0;
 
     for(r = 0; r < matrix->rows; r++)
     {
         for(c = 0; c < matrix->columns; c++)
         {
-            matrix->data[r][c] = (((double)rand() - RAND_MAX/2) / RAND_MAX/2);
-        }
+	    random_number = ((double)(rand() - ((double)RAND_MAX/2)) / ((double)RAND_MAX/2));
+	    matrix->data[r][c] = random_number;        
+	}
     }
 }
 
