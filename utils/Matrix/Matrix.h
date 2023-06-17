@@ -27,6 +27,7 @@ void dot(Matrix m1, Matrix m2, union Result *res);
 void ones(Matrix *matrix);
 void matMult(Matrix m1, Matrix m2, Matrix *res);
 double vectorMult(double *v1, double *v2, int length);
+void flatten(Matrix *m, Matrix *flattened);
 void print_matrix(Matrix m, char* header);
 void print_dim(Matrix m);
 

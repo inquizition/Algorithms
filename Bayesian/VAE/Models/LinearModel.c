@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-//#define TEST
+#define TEST
 
 LM *InitLinear(int a, int b)
 {
@@ -38,26 +38,29 @@ void Linear(LM *m, Matrix *input)
 	Matrix *A_T = allocateMatrix(m->A->rows, m->A->columns);
 
 	copyMatrix(*m->A, A_T);
-	transpose(&A_T);
+	//transpose(&A_T);
 	ones(ones_temp);
 	
-	//printf("input: ");
-	//print_dim(*input);
-	//printf("ones_temp: ");
-	//print_dim(*ones_temp);
-	//printf("Res_temp: ");
-	//print_dim(*res_temp);
-	//printf("output: ");
-	//print_dim(*res_temp);
-	//printf("A_T: ");
-	//print_dim(*A_T);
-
-	dot(*input, *ones_temp, (union Result *)res_temp);
-	matMult(*res_temp, *A_T, m->output);
-
+	//dot(*input, *ones_temp, (union Result *)res_temp);
+	//matMult(*res_temp, *A_T, m->output);
+	matMult(*input,*A_T,m->output);
 	freeMatrix(ones_temp);
 	freeMatrix(res_temp);
 	freeMatrix(A_T);
+}
+
+/* Prints linear model */
+void print_linear(LM *m)
+{
+	printf("A: ");
+	print_dim(*m->A);
+	printf("b: ");
+	print_dim(*m->b);
+	if(m->output_init)
+	{
+		printf("output: ");
+		print_dim(*m->output);
+	}
 }
 
 void forward(LM* linear)

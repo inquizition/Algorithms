@@ -40,7 +40,8 @@ int main(void)
 	//print_matrix(*mat_img);
 
 	NLM *non_linear_model = InitNLM(2, 400, 784);
-	cost_function(mat_img, non_linear_model, 1);
+	double cost = cost_function(mat_img, non_linear_model, 1);
+	printf("Cost: %f\n", cost);
 	freeNonLinear(non_linear_model);
 	freeMatrix(mat_img);
 

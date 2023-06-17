@@ -211,6 +211,20 @@ void matrixAdd(Matrix matrix, Matrix a, Matrix *res)
     }
 }
 
+void flatten(Matrix *m, Matrix *flattened)
+{
+    int r;
+    int c;
+    for(r = 0; r < m->rows; r++)
+    {
+	for(c = 0; c < m->columns; c++)
+	{
+	    flattened->data[0][c + (r*m->columns)] = m->data[r][c];
+	}
+
+    }
+}
+
 void matrixSubtract(Matrix matrix, Matrix a, Matrix *res)
 {
     bool single_element = (a.columns == 1 && a.rows == 1);

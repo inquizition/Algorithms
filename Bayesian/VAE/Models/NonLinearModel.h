@@ -10,5 +10,6 @@ typedef struct
 NLM *InitNLM(int a, int b, int c);
 
 void freeNonLinear(NLM *nonLinear);
-void cost_function(Matrix *X, NLM *model, int K);
 void decode(NLM model, Matrix *z);
+void printNonLinear(NLM *nonLinear);
+double cost_function(Matrix *X, NLM *model, int K);
