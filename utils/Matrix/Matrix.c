@@ -37,6 +37,43 @@ static void free2Darray(double **arr, int rows, int columns);
 //     }
 // }
 
+/* Function returns the max value of the Matrix */
+static double max_matrix(Matrix *m)
+{
+    double max = m->data[0][0];
+    int r;
+    int c;
+    for(r = 0; r < m->rows; r++)
+    {
+	for(c = 0; c < m->columns; c++)
+	{
+	    if(m->data[r][c] > max)
+	    {
+		max = m->data[r][c];
+	    }
+	}
+    }
+    return max;
+}
+
+double logsumexp(Matrix *m)
+{
+	int i;
+	int j;
+	double res = 0.0;
+	double max = max_matrix(m);
+
+	for(i = 0; i < m->rows; i++)
+	{
+		for(j = 0; j < m->columns; j++)
+		{
+			res += exp(m->data[j][i] - max);
+		}
+	}
+
+	return log(res) + max;
+}
+
 void matrix_pow(Matrix *m, int power)
 {
     int r;
@@ -85,6 +122,26 @@ void reLu_matrix(Matrix *m)
         for(c = 0; c < m->columns; c++)
         {
 	    if(m->data[r][c] < 0)
+	    {
+            	m->data[r][c] = 0;
+	    }
+        }
+    }
+}
+
+void d_reLu_matrix(Matrix *m)
+{
+    int r;
+    int c;
+    for(r = 0; r < m->rows; r++)
+    {
+        for(c = 0; c < m->columns; c++)
+        {
+	    if(m->data[r][c] > 0)
+	    {
+            	m->data[r][c] = 1;
+	    }
+	    else
 	    {
             	m->data[r][c] = 0;
 	    }
@@ -187,9 +244,12 @@ void matrixAdd(Matrix matrix, Matrix a, Matrix *res)
     
     int r;
     int c;
-    for(r = 0; r < matrix.rows; r++)
+    int rows = matrix.rows;
+    int columns = matrix.columns;
+
+    for(r = 0; r < rows; r++)
     {
-        for(c = 0; c < matrix.columns; c++)
+        for(c = 0; c < columns; c++)
         {
             if(single_element)
             {

@@ -39,9 +39,8 @@ double cost_function(Matrix *X, NLM *model, int K)
 	// compute y with y[j, i] = -1/(2 * sigma_theta^2) * || x_j - mu_theta(z_i)) ||^2_2
 	sample_decode(model, K);
 	double logsigma = model->logsigma2->data[0][0];
-	Matrix *y = allocateMatrix(
-				model->logsigma2->rows, 
-				model->logsigma2->columns);
+	double y = 0.0;
+
 	Matrix *mu = allocateMatrix(
 				model->decoder_fc2->output->rows, 
 				model->decoder_fc2->output->columns);
@@ -55,25 +54,54 @@ double cost_function(Matrix *X, NLM *model, int K)
 	copyMatrix(*model->decoder_fc2->output, mu);
 	flatten(X, flattened);
 
-	logsigma = (exp(-logsigma))*-0.5;
-	printf("logsigma: %f\n", logsigma);
+	y = (exp(-logsigma))*-0.5;
 	matrixSubtract(*flattened, *mu, res);
 	matrix_pow(res,2);
-	print_matrix(*res, "res");
-	double cost = matrix_sum(res);
+	y = matrix_sum(res)*y;
 	
-	printf("cost: %f\n", cost);
-	cost = cost * logsigma;
+	double cost = (392 * logsigma) - (y);
 
 	/* Compute the logsumexp of y and take the mean
 	 * then subtract "cost" with that mean.*/
 
-	freeMatrix(y);
 	freeMatrix(mu);
 	freeMatrix(res);
 	freeMatrix(flattened);
 
 	return cost;
+}
+
+double derivative_cost_function(Matrix *X, NLM *model)
+{
+	Matrix *res = allocateMatrix(
+				model->decoder_fc2->output->rows, 
+				model->decoder_fc2->output->columns);
+	Matrix *flattened = allocateMatrix(
+				1, 
+				model->decoder_fc2->output->columns);
+	Matrix *d_output = allocateMatrix(
+				model->decoder_fc2->output->rows, 
+				model->decoder_fc2->output->columns);
+
+	copyMatrix(*model->decoder_fc2->output, d_output);
+	d_reLu_matrix(d_output);
+	
+	double logsigma = model->logsigma2->data[0][0];
+	flatten(X, flattened);
+
+	matrixSubtract(*flattened, *model->decoder_fc2->output, res);
+	matrix_pow(res,2);
+	double MSE = matrix_sum(res);
+	
+	double g_x = (exp(-logsigma)) * -0.5 * MSE;
+	double g_prim_x = (exp(-logsigma)) * MSE;
+
+	double result = (exp(g_x)*g_prim_x)/exp(g_x);
+
+	freeMatrix(res);
+	freeMatrix(flattened);
+
+	return result;
 }
 
 /* Prints Non linear model */

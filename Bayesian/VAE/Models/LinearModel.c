@@ -15,6 +15,8 @@ LM *InitLinear(int a, int b)
 #ifdef TEST
 	ones(model_ptr->A);
 	ones(model_ptr->b);
+	const_mult_matrix(model_ptr->A, 0.1);
+	const_mult_matrix(model_ptr->b, 0.1);
 #else
 	InitRandomMatrix(model_ptr->A);
 	InitRandomMatrix(model_ptr->b);
@@ -33,20 +35,13 @@ void Linear(LM *m, Matrix *input)
 	}
 	m->output = allocateMatrix(input->rows, m->A->columns);
 	m->output_init = true;	
-	Matrix *ones_temp = allocateMatrix(input->columns, m->A->columns);
-	Matrix *res_temp = allocateMatrix(input->rows, m->A->columns);
-	Matrix *A_T = allocateMatrix(m->A->rows, m->A->columns);
+	Matrix *res_temp = allocateMatrix(m->output->rows, m->output->columns);
 
-	copyMatrix(*m->A, A_T);
-	//transpose(&A_T);
-	ones(ones_temp);
-	
-	//dot(*input, *ones_temp, (union Result *)res_temp);
-	//matMult(*res_temp, *A_T, m->output);
-	matMult(*input,*A_T,m->output);
-	freeMatrix(ones_temp);
+	matMult(*input,*m->A,res_temp);
+	transpose(&m->b);
+	matrixAdd(*res_temp, *m->b, m->output);
+	transpose(&m->b);
 	freeMatrix(res_temp);
-	freeMatrix(A_T);
 }
 
 /* Prints linear model */
@@ -63,7 +58,7 @@ void print_linear(LM *m)
 	}
 }
 
-void forward(LM* linear)
+void backward(LM* linear, Matrix *dz)
 {
 
 }

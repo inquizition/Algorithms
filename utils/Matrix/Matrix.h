@@ -19,6 +19,7 @@ struct Node {
 };
 //linus är en liten sötknopp
 
+void d_reLu_matrix(Matrix *m);
 double matrix_sum(Matrix *m);
 void zeros(Matrix *matrix);
 void fillMatrix(Matrix *matrix, double *data);
@@ -46,3 +47,4 @@ void reLu_matrix(Matrix *m);
 void exp_matrix(Matrix *m);
 void const_mult_matrix(Matrix *m, double c);
 void matrix_pow(Matrix *m, int power);
+double logsumexp(Matrix *m);
