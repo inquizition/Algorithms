@@ -1,6 +1,6 @@
-add_executable(MatrixTest Matrix_test.c)
+add_executable(MatrixTest Matrix_test_suite.c)
 
-target_link_libraries(MatrixTest PUBLIC MatrixFunctions PRIVATE cunit m)
+target_link_libraries(MatrixTest PUBLIC Matrix_test_lib PUBLIC MatrixFunctions PRIVATE cunit m)
 
 target_include_directories(MatrixTest PUBLIC 
             "${PROJECT_BINARY_DIR}"
