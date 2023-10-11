@@ -12,7 +12,7 @@ NLM *InitNLM(int a, int b, int c)
 	NLM *model;
 	model = (NLM*) malloc(sizeof(NLM));
 	model->decoder_fc1 = InitLinear(a,b); // 2, 400
-	model->decoder_fc2 = InitLinear(b, c); // 400, 784
+	model->decoder_fc2 = InitLinear(b,c); // 400, 784
 	model->logsigma2 = allocateMatrix(1,1);
 	return model;
 }

@@ -21,6 +21,7 @@ add_executable(main main.c)
 enable_testing()
 add_test(Matrix_test 		test_folder/MatrixTest)
 add_test(LinearModel_test 	test_folder/LinearModelTest)
+add_test(NonLinearModel_test 	test_folder/NonLinearModelTest)
 
 # link libraries
 target_link_libraries(main PUBLIC MatrixFunctions PUBLIC ModelFunctions m)
@@ -37,5 +38,9 @@ target_include_directories(MatrixTest PUBLIC
         "${PROJECT_SOURCE_DIR}/test_folder")
 
 target_include_directories(LinearModelTest PUBLIC
+	"${PROJECT_BINARY_DIR}"
+	"${PROJECT_SOURCE_DIR}/test_folder")
+
+target_include_directories(NonLinearModelTest PUBLIC
 	"${PROJECT_BINARY_DIR}"
 	"${PROJECT_SOURCE_DIR}/test_folder")
