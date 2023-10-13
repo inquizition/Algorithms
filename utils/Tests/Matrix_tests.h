@@ -1,0 +1,27 @@
+#include "Matrix.h"
+#include "CUnit/CUnit.h"
+#include "CUnit/Basic.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+void test_createMatrix(void); 
+void test_matrixAdd(void);
+void test_matrixAdd_EqualRow(void);
+void test_matrixAdd_EqualColumn(void);
+void test_matrixAdd_addConst(void);
+void test_matrixSubtract(void);
+void test_matrixSubtract_EqualRow(void);
+void test_matrixSubtract_EqualColumn(void);
+void test_matrixSubtract_addConst(void);
+void tests_transposeMatrix_2x4(void);
+void tests_transposeMatrix_2x2(void);
+void test_eyeMatrix(void);
+void test_swapMatrix(void);
+void test_matrixDot_2x2(void);
+void test_matrixDot_2x4(void);
+void test_matrixDot_1x1(void);
+void test_matrixDot_4x4(void);
+void test_hadamardProd_2x2(void);
+void test_hadamardProd_1x2(void);
+void tests_compareMatrix(void);
+void test_relu_matrix(void);
