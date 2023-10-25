@@ -13,3 +13,4 @@ void freeNonLinear(NLM *nonLinear);
 void decode(NLM model, Matrix *z);
 void printNonLinear(NLM *nonLinear);
 double cost_function(Matrix *X, NLM *model, int K);
+double derivative_cost_function(Matrix *X, NLM *model);
