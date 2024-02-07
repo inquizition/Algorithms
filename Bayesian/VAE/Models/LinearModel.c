@@ -44,6 +44,15 @@ void Linear(LM *m, Matrix *input)
 	freeMatrix(res_temp);
 }
 
+void derivate_linear(LM *m, Matrix *error)
+{
+	// x = points[i, 0]
+	// y = points[i, 1]
+	// b_gradient += -(2/N)*(y - ((m_current*x)+b_current))
+	// m_gradient += -(2/M)* x * (y - ((m_current * x) + b_current))
+	// update grad*learningrate
+}
+
 /* Prints linear model */
 void print_linear(LM *m)
 {

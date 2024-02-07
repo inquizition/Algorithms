@@ -23,8 +23,10 @@ add_test(Matrix_test 		test_folder/MatrixTest)
 add_test(LinearModel_test 	test_folder/LinearModelTest)
 add_test(NonLinearModel_test 	test_folder/NonLinearModelTest)
 
+find_library(MATH_LIBRARY m)
+
 # link libraries
-target_link_libraries(main PUBLIC MatrixFunctions PUBLIC ModelFunctions m)
+target_link_libraries(main PUBLIC MatrixFunctions PUBLIC ModelFunctions PRIVATE m)
  
 # add the binary tree to the search path for main include files
 target_include_directories(main PUBLIC 
