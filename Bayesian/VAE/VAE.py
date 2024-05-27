@@ -44,12 +44,15 @@ class VAE(nn.Module):
         x_hat = self.decoder(z)
         return x_hat, mu, logvar
 
-def generate_c_code(module, name):
+def generate_layers_c_code(module, name, params):
     layers = []
     i = 0
-    for layer in module.children():
+    for layer, dim in zip(module.children(), params):
         if isinstance(layer, nn.Linear):
-            layers.append(f'void {name}_linear_{i}(float* input, float* output, float* weight, float* bias, int in_features, int out_features);')
+            print(layer.in_features)
+            print(layer.out_features)
+            layers.append(f'model->{name}_layer_{i} = InitLinear({layer.in_features}, {layer.out_features});')
+            #layers.append(f'void {name}_linear_{i}(float* input, float* output, float* weight, float* bias, int in_features, int out_features);')
             i += 1
     return layers
 
@@ -85,16 +88,22 @@ enc_hid_dim = encoder_params[1]
 enc_lat_dim = encoder_params[2]
 dec_hid_dim = decoder_params[1]
 
-encoder_layers = generate_c_code(encoder_2, "encoder")
-decoder_layers = generate_c_code(decoder_2, "decoder")
+encoder_layers = generate_layers_c_code(encoder_2, "encoder", encoder_params)
+decoder_layers = generate_layers_c_code(decoder_2, "decoder", decoder_params)
 
-with open('Bayesian/VAE/model.h', 'w') as f:
+with open('Bayesian/VAE/model.c', 'w') as f:
     f.write('#ifndef MODEL_H\n#define MODEL_H\n\n')
     f.write(f'#define INPUT_DIM {enc_in_dim}\n')
     f.write(f'#define ENCODER_HIDDEN_DIM {enc_hid_dim}\n')
     f.write(f'#define DECODER_HIDDEN_DIM {dec_hid_dim}\n')
     f.write(f'#define LATENT_DIM {enc_lat_dim}\n\n')
-    f.write('\n'.join(encoder_layers + decoder_layers))
+    f.write(f'NLM *InitNLM_Model(void)\n')
+    f.write('{\n')
+    f.write('    NLM *model;\n')
+    f.write('    model = (NLM*) malloc(sizeof(NLM));')
+    f.write('\n    '.join(encoder_layers + decoder_layers))
+    f.write('\n    return model;\n');
+    f.write('}')
     f.write('\n\n#endif // MODEL_H\n')
 
 print("Header file generated: model.h")
