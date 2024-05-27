@@ -154,6 +154,7 @@ Matrix *allocateMatrix(int rows, int columns)
     m_ptr->columns = columns;
 
     m_ptr->data = allocate2Darray(rows, columns);
+    m_ptr->next = NULL;
 
     int r, c;
 
@@ -164,6 +165,20 @@ Matrix *allocateMatrix(int rows, int columns)
         {
             m_ptr->data[r][c] = 0.00;
         }
+    }
+
+    if (allocated_matrices == NULL)
+    {
+        allocated_matrices = m_ptr;
+    }
+    else
+    {
+	Matrix *current = allocated_matrices;
+	while (current->next != NULL)
+	{
+	    current = current->next;
+	}
+	current->next = m_ptr;
     }
 
     return m_ptr;
@@ -195,8 +210,39 @@ static void free2Darray(double **arr, int rows, int columns)
 
 void freeMatrix(Matrix *m)
 {
+    if(m == NULL) return;
+
+    if(allocated_matrices == m)
+    {
+	allocated_matrices = m->next;
+    }
+    else
+    {
+	Matrix *current = allocated_matrices;
+	while(current != NULL && current->next != m)
+	{
+	    current = current->next;
+	}
+	if(current != NULL)
+	{
+	    current->next = m->next;
+	}
+    }
+
     free2Darray(m->data, m->rows, m->columns);
     free(m);
+}
+
+void freeAllMatrices(void)
+{
+    Matrix *current = allocated_matrices;
+    while (current != NULL) {
+        Matrix *next = current->next;
+        freeMatrix(current);
+        current = next;
+    }
+    allocated_matrices = NULL; 
+
 }
 
 static void swap(double* arg1, double* arg2)

@@ -6,6 +6,7 @@ typedef struct Matrix
 {
     int rows, columns;
     double **data;
+    struct Matrix *next;
 } Matrix;
 
 union Result {
@@ -17,7 +18,8 @@ struct Node {
     struct Matrixt *ptr;
     struct Node *next;
 };
-//linus är en liten sötknopp
+
+static Matrix *allocated_matrices = NULL;
 
 void d_reLu_matrix(Matrix *m);
 double matrix_sum(Matrix *m);
@@ -33,6 +35,7 @@ void print_matrix(Matrix m, char* header);
 void print_dim(Matrix m);
 
 void freeMatrix(Matrix *m);
+void freeAllMatrices(void);
 void InitRandomMatrix(Matrix *matrix);
 void transpose(Matrix **m);
 void matrixAdd(Matrix matrix, Matrix a, Matrix *res);

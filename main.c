@@ -1,7 +1,7 @@
 #include "Matrix.h"
 #include "LinearModel.h"
 #include "NonLinearModel.h"
-#include "stdlib.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <time.h>
@@ -12,8 +12,14 @@
 
 #define SIZE 5000
 
+void registerExitHandler(void)
+{
+    atexit(freeAllMatrices);
+}
+
 int main(void)
 {
+	registerExitHandler();
 	srand ( time(NULL) );
 	FILE *file;
 	int img[SIZE];
@@ -49,5 +55,5 @@ int main(void)
 	freeNonLinear(non_linear_model);
 	freeMatrix(mat_img);
 
-	return 1;
+	return 0;
 }
