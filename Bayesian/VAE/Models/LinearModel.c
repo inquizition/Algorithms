@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <assert.h>
 
 #define TEST
 
@@ -10,7 +11,7 @@ LM *InitLinear(int a, int b)
 {
 	LM *model_ptr;
 	model_ptr = (LM*) malloc(sizeof(LM));
-	model_ptr->A = allocateMatrix(a, b);
+	model_ptr->A = allocateMatrix(b, a);
 	model_ptr->b = allocateMatrix(b,1);
 #ifdef TEST
 	ones(model_ptr->A);
@@ -29,17 +30,21 @@ LM *InitLinear(int a, int b)
 void Linear(LM *m, Matrix *input)
 {	
 	//printf("Attempting Linear transformation.\n");
+	
+        assert(m->A->columns == input->columns);
 	if(m->output_init)
 	{
 		free(m->output);
 	}
-	m->output = allocateMatrix(input->rows, m->A->columns);
+	m->output = allocateMatrix(input->rows, m->A->rows);
 	m->output_init = true;	
 	Matrix *res_temp = allocateMatrix(m->output->rows, m->output->columns);
 
-	matMult(*input,*m->A,res_temp);
+	transpose(&m->A);
 	transpose(&m->b);
+	dot(*input,*m->A, (union Result*)res_temp);
 	matrixAdd(*res_temp, *m->b, m->output);
+	transpose(&m->A);
 	transpose(&m->b);
 	freeMatrix(res_temp);
 }

@@ -1,5 +1,6 @@
 #include "stdint.h"
 #include "stdio.h"
+#include "model.h"
 
 #define SIZE 5000;
 //void VAE()

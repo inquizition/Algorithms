@@ -1,7 +1,7 @@
 #include "NonLinearModel_tests.h"
 
 static CU_TestInfo test_cases[] = {
-    { "test_init_non_linear", test_init_non_linear },
+    { "test_init_non_linear", test_init_NonLinear },
     CU_TEST_INFO_NULL,
 };
 

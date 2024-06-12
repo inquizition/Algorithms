@@ -56,6 +56,65 @@ def generate_layers_c_code(module, name, params):
             i += 1
     return layers
 
+def generate_decode_c_code(module, name, params):
+    layers = []
+    i = 0
+    for layer, dim in zip(module.children(), params):
+        if isinstance(layer, nn.Linear):
+            if (i == 0):
+                layers.append(f'Linear(model.{name}_layer_{i}, z);')
+                layers.append(f'Matrix *output_relu = allocateMatrix( model.{name}_layer_{i}->output->rows, model.{name}_layer_{i}->output->columns);')
+                layers.append(f'copyMatrix(*model.{name}_layer_{i}->output, output_relu);')
+                layers.append(f'reLu_matrix(output_relu);')
+            else:
+                layers.append(f'Linear(model.{name}_layer_{i}, model.{name}_layer_{0}->output);')
+            i += 1
+    return layers
+
+def generate_encode_c_code(module, name, params):
+    layers = []
+    i = 0
+    for layer, dim in zip(module.children(), params):
+        if isinstance(layer, nn.Linear):
+            if (i == 0): 
+                layers.append(f'Linear(model.{name}_layer_{i}, x);')
+                layers.append(f'Matrix *output_relu = allocateMatrix( model.{name}_layer_{i}->output->rows, model.{name}_layer_{i}->output->columns);')
+                layers.append(f'copyMatrix(*model.{name}_layer_{i}->output, output_relu);')
+                layers.append(f'reLu_matrix(output_relu);')
+            else:
+                layers.append(f'Linear(model.{name}_layer_{i}, output_relu);')
+            i += 1
+    return layers
+
+def generate_NLM_h_code(module, name):
+    layers = []
+    i = 0
+    for layer in module.children():
+        if isinstance(layer, nn.Linear):
+            layers.append(f'LM* {name}_layer_{i};')
+            i += 1
+    return layers
+
+def generate_weight_load_c_code(module, name, params):
+    layers = []
+    i = 0
+    for layer, dim in zip(module.children(), params):
+        if isinstance(layer, nn.Linear):
+            layers.append(f'load_weights("vae_weights", &model->{name}_layer_{i}->A[0][0], {layer.in_features} * {layer.out_features});')
+            layers.append(f'load_weights("vae_weights", &model->{name}_layer_{i}->b[0][0], {layer.out_features});')
+            i += 1
+    return layers
+
+def save_weights_to_binary(model, filename):
+    #weights = {}
+    #for name, param in model.named_parameters():
+    #    weights[name] = param.detach.numpy()
+
+    with open(filename, 'wb') as f:
+        for name, param in model.named_parameters():
+            weight = param.detach().numpy()
+            weight.tofile(f)
+
 input_dim=784
 hidden_dim = 512
 hidden_dim_2 = 400
@@ -89,21 +148,85 @@ enc_lat_dim = encoder_params[2]
 dec_hid_dim = decoder_params[1]
 
 encoder_layers = generate_layers_c_code(encoder_2, "encoder", encoder_params)
-decoder_layers = generate_layers_c_code(decoder_2, "decoder", decoder_params)
+encode_code = generate_encode_c_code(encoder_2, "encoder", encoder_params)
 
-with open('Bayesian/VAE/model.c', 'w') as f:
+decoder_layers = generate_layers_c_code(decoder_2, "decoder", decoder_params)
+decode_code = generate_decode_c_code(decoder_2, "decoder", decoder_params)
+
+model_enc_struct_h_code = generate_NLM_h_code(encoder_2, "encoder")
+model_dec_struct_h_code = generate_NLM_h_code(decoder_2, "decoder")
+
+load_enc_weights_code = generate_weight_load_c_code(encoder_2, "encoder", encoder_params)
+load_dec_weights_code = generate_weight_load_c_code(decoder_2, "decoder", decoder_params)
+
+save_weights_to_binary(model_2, 'Bayesian/VAE/Models/vae_weights.bin')
+
+with open('Bayesian/VAE/Models/model.c', 'w') as f:
+    f.write('#ifndef MODEL_H\n#define MODEL_H\n\n')
+
+    f.write('static void load_weights(const char *filename, double *weights, size_t size)\n{\n')
+    f.write('    FILE *f = fopen(filename, "rb");\n')
+    f.write('    if(!f){\n')
+    f.write('        fprintf(stderr, "Error opening weights file\\n");\n')
+    f.write('        exit(1);\n')
+    f.write('    }\n')
+    f.write('    fread(weights, sizeof(double), size, f);\n')
+    f.write('}')
+    f.write('\n')
+
+    f.write(f'NLM *InitTrainedNLM_Model(void)\n')
+    f.write('{\n')
+    f.write('    NLM *model;\n')
+    f.write('    model = (NLM*) malloc(sizeof(NLM));\n')
+    f.write('    ')
+    f.write('\n    '.join(encoder_layers + decoder_layers))
+    f.write('\n    return model;\n');
+    f.write('}')
+    f.write('\n')
+
+    f.write('void decode(NLM model, Matrix *z)\n')
+    f.write('{\n')
+    f.write('    ')
+    f.write('\n    '.join(decode_code))
+    f.write('\n}')
+    f.write('\n')
+    f.write('void encode(NLM model, Matrix *x)\n')
+    f.write('{\n')
+    f.write('    ')
+    f.write('\n    '.join(encode_code))
+    f.write('\n}\n')
+
+    f.write('void load_trained_weights(NLM *model)\n{\n')
+    f.write('    ')
+    f.write('\n    '.join(load_enc_weights_code + load_dec_weights_code))
+    f.write('\n}\n')
+
+    f.write('\n\n#endif // MODEL_H\n')
+
+with open('Bayesian/VAE/Models/model.h', 'w') as f:
     f.write('#ifndef MODEL_H\n#define MODEL_H\n\n')
     f.write(f'#define INPUT_DIM {enc_in_dim}\n')
     f.write(f'#define ENCODER_HIDDEN_DIM {enc_hid_dim}\n')
     f.write(f'#define DECODER_HIDDEN_DIM {dec_hid_dim}\n')
     f.write(f'#define LATENT_DIM {enc_lat_dim}\n\n')
-    f.write(f'NLM *InitNLM_Model(void)\n')
-    f.write('{\n')
-    f.write('    NLM *model;\n')
-    f.write('    model = (NLM*) malloc(sizeof(NLM));')
-    f.write('\n    '.join(encoder_layers + decoder_layers))
-    f.write('\n    return model;\n');
-    f.write('}')
+
+    f.write('void decode(NLM model, Matrix *z);\n')
+    f.write('\n')
+    f.write('void encode(NLM model, Matrix *x);\n')
+    f.write('\n')
+    f.write('typedef struct\n{\n')
+    f.write('    bool output_init;\n')
+    f.write('    ')
+    f.write('\n    '.join(model_enc_struct_h_code + model_dec_struct_h_code))
+    f.write('\n    Matrix* logsigma2;\n')
+    f.write('}NLM;\n')
+    f.write('\n')
+    f.write(f'NLM *InitTrainedNLM_Model(void);\n')
+    f.write('\n')
+    f.write('void load_trained_weights(NLM *model);')
+
     f.write('\n\n#endif // MODEL_H\n')
+
 
+
 print("Header file generated: model.h")

@@ -433,6 +433,7 @@ bool cmpMatrix(Matrix m1, Matrix m2)
         {
             if(m1.data[r][c] != m2.data[r][c])
             {
+		printf("a: %.4f not equal to b: %.4f \n",m1.data[r][c], m2.data[r][c]);
                 equal = false;
             }
         }
@@ -522,6 +523,27 @@ void matMult(Matrix m1, Matrix m2, Matrix *res)
     int r;
     int c;
 	
+    #pragma omp parallel for private(c)
+    for(r = 0; r < m1.rows; r++)
+    {
+        for(c = 0; c < m1.columns; c++)
+        {
+            res->data[r][c] += m1.data[r][c] * m2.data[r][c];
+        }
+    }
+}
+
+void hadamard_prod(Matrix m1, Matrix m2, Matrix* res)
+{
+    res->rows = m1.rows;
+    res->columns = m1.columns;
+
+    assert(m1.columns == m2.columns);
+    assert(m1.rows == m2.rows);
+
+    int r;
+    int c;
+
     #pragma omp parallel for private(c)
     for(r = 0; r < m1.rows; r++)
     {
