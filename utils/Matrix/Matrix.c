@@ -425,15 +425,16 @@ bool cmpMatrix(Matrix m1, Matrix m2)
 {
     int r, c;
     bool equal = true;
+#define EPSILON 1e-9
 
     #pragma omp parallel for private(c) reduction(&&:equal)
     for(r = 0; r < m1.rows; r++)
     {
         for(c = 0; c < m1.columns; c++)
         {
-            if(m1.data[r][c] != m2.data[r][c])
+            if(fabs(m1.data[r][c] - m2.data[r][c]) > EPSILON)
             {
-		printf("a: %.4f not equal to b: %.4f \n",m1.data[r][c], m2.data[r][c]);
+		printf("a: %.4f not equal to b: %.4f, difference: %.4f \n",m1.data[r][c], m2.data[r][c], fabs(m1.data[r][c] - m2.data[r][c]));
                 equal = false;
             }
         }
