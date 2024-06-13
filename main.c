@@ -42,7 +42,7 @@ int main(void)
 		//printf("\n");
 	}	
 
-	Matrix *mat_img = allocateMatrix(784,1);
+	Matrix *mat_img = allocateMatrix(1,784);
 	fillMatrix(mat_img, norm_img);
 	//print_matrix(*mat_img);
 

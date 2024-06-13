@@ -45,9 +45,6 @@ void test_linear(void)
         double expected_data[1][4] = {{212.3800, 213.3800, 214.3800, 215.3800}};
 	fillMatrix(expected, *expected_data);
 
-	print_matrix(*linear->output, "output");
-	print_matrix(*expected, "expected");
-
 	CU_ASSERT_TRUE(cmpMatrix(*linear->output, *expected));
 
 	freeLinear(linear);
