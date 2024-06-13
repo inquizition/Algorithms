@@ -1,9 +1,4 @@
-#include "Matrix.h"
 #include "LinearModel.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <assert.h>
 
 #define TEST
 

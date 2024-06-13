@@ -57,7 +57,7 @@ int main(void)
 
 	//printf("Res: %f\n", res);
 	print_matrix(*(non_linear_model->encoder_layer_2->output), "RES");
-	freePTNonLinear(non_linear_model);
+	freeTrainedNonLinear(non_linear_model);
 	freeMatrix(mat_img);
 
 	return 0;

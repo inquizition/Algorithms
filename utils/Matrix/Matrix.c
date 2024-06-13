@@ -1,10 +1,5 @@
 #include "Matrix.h"
-#include <stdlib.h>
-#include <math.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <assert.h>
-#include <omp.h>
+
 
 static void swap(double* arg1, double* arg2);
 static double **allocate2Darray(int rows, int columns);

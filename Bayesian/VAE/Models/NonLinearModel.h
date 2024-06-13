@@ -1,3 +1,12 @@
+#ifndef M_NONLINEARMODEL_H
+#define M_NONLINEARMODEL_H
+
+#include "Matrix.h"
+#include "LinearModel.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <assert.h>
 // Non linear model
 typedef struct
 {
@@ -14,3 +23,5 @@ void decode(NLM model, Matrix *z);
 void printNonLinear(NLM *nonLinear);
 double cost_function(Matrix *X, NLM *model, int K);
 double derivative_cost_function(Matrix *X, NLM *model);
+
+#endif M_NONLINEARMODEL_H

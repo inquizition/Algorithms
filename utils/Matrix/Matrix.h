@@ -1,6 +1,12 @@
-#include "math.h"
-#include "stdio.h"
+#ifndef M_MATRIX_H
+#define M_MATRIX_H
+
+#include <stdlib.h>
+#include <math.h>
+#include <stdio.h>
 #include <stdbool.h>
+#include <assert.h>
+#include <omp.h>
 
 typedef struct Matrix
 {
@@ -51,3 +57,5 @@ void exp_matrix(Matrix *m);
 void const_mult_matrix(Matrix *m, double c);
 void matrix_pow(Matrix *m, int power);
 double logsumexp(Matrix *m);
+
+#endif M_MATRIX_H

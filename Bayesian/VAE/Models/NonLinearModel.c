@@ -1,9 +1,4 @@
-#include "Matrix.h"
-#include "LinearModel.h"
 #include "NonLinearModel.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
 
 //static NLM *model;
 
