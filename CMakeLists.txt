@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)                                                                                                   
 # set the project name and version
-project(Algorithms VERSION 1.0)
+project(Algorithms VERSION 1.0 LANGUAGES C)
 
 # specify the C standard
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

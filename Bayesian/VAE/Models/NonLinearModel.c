@@ -12,7 +12,7 @@ NLM *InitNLM(int a, int b, int c)
 	return model;
 }
 
-void decode(NLM model, Matrix *z)
+void decode_2(NLM model, Matrix *z)
 {
 	Linear(model.decoder_fc1, z);
 	Matrix *output_relu = allocateMatrix(

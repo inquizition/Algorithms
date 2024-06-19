@@ -20,7 +20,7 @@ void registerExitHandler(void)
 
 int main(void)
 {
-	registerExitHandler();
+	//registerExitHandler();
 	srand ( time(NULL) );
 	FILE *file;
 	int img[SIZE];
@@ -42,23 +42,24 @@ int main(void)
 		//printf("\n");
 	}	
 
-	Matrix *mat_img = allocateMatrix(1,784);
-	fillMatrix(mat_img, norm_img);
-	//print_matrix(*mat_img);
+	//Matrix *mat_img = allocateMatrix(1,784);
+	//fillMatrix(mat_img, norm_img);
+	run_trained_model(norm_img);
+	////print_matrix(*mat_img);
 
-	//NLM *non_linear_model = InitNLM(2, 400, 784);
-	//NLM *non_linear_model = InitNLM_Model();
-	PTNLM *non_linear_model = InitTrainedNLM_Model();
-	//double cost = cost_function(mat_img, non_linear_model, 1);
-	//printf("Cost: %f\n", cost);
+	////NLM *non_linear_model = InitNLM(2, 400, 784);
+	////NLM *non_linear_model = InitNLM_Model();
+	//PTNLM *non_linear_model = InitTrainedNLM_Model();
+	////double cost = cost_function(mat_img, non_linear_model, 1);
+	////printf("Cost: %f\n", cost);
 
-	//double res = derivative_cost_function(mat_img, non_linear_model);
-	encode(*non_linear_model, mat_img);
+	////double res = derivative_cost_function(mat_img, non_linear_model);
+	//encode(*non_linear_model, mat_img);
 
-	//printf("Res: %f\n", res);
-	print_matrix(*(non_linear_model->encoder_layer_2->output), "RES");
-	freeTrainedNonLinear(non_linear_model);
-	freeMatrix(mat_img);
+	////printf("Res: %f\n", res);
+	//print_matrix(*(non_linear_model->encoder_layer_2->output), "RES");
+	//freeTrainedNonLinear(non_linear_model);
+	//freeMatrix(mat_img);
 
 	return 0;
 }
