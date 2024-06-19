@@ -16,6 +16,7 @@ ffi = FFI()
 # Define the C function signatures from your library
 ffi.cdef("""
 void run_trained_model(double *image);
+void run_print_model(char *weights_file);
 """)
 
 # Load the shared library
@@ -24,6 +25,7 @@ C = ffi.dlopen(os.path.join(os.path.dirname(__file__), "../../../build/Bayesian/
 
 # Access the C functions
 run_trained_model = C.run_trained_model
+run_print_model = C.run_print_model
 
 # Load the model with metadata
 checkpoint = torch.load('vae_model.pth')
@@ -33,6 +35,7 @@ encoder = Encoder(*encoder_params)
 decoder = Decoder(*decoder_params)
 model = VAE(encoder, decoder)
 model.load_state_dict(checkpoint['model_state_dict'])
+
 
 if __name__ == "__main__":
  # Read the binary image file
@@ -53,6 +56,10 @@ if __name__ == "__main__":
 
     # Explicitly cast the pointer to the correct type
     input_c_array = ffi.cast("double*", input_c_array)
+
+    weights_file_path = ffi.new("char[]", b"Bayesian/VAE/Models/vae_weights.bin")
+
+    run_print_model(weights_file_path)
 
     # Call the function with the C array and its length
     run_trained_model(input_c_array)
