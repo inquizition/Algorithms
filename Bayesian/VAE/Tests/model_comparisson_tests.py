@@ -36,15 +36,16 @@ decoder = Decoder(*decoder_params)
 model = VAE(encoder, decoder)
 model.load_state_dict(checkpoint['model_state_dict'])
 
+state_dict = checkpoint['state_dict'] if 'state_dict' in checkpoint else checkpoint
 
 if __name__ == "__main__":
  # Read the binary image file
     bin_file_path = "data/img.bin"
     with open(bin_file_path, "rb") as f:
-        data = f.read(28 * 28 * 4)  # Read 784 int elements (each int is 4 bytes)
+        data = f.read(4 * 4 * 4)  # Read 784 int elements (each int is 4 bytes)
 
     # Convert the binary data to a numpy array of integers
-    img = np.frombuffer(data, dtype=np.int32).reshape(28, 28)
+    img = np.frombuffer(data, dtype=np.int32).reshape(4, 4)
 
     # Normalize the image data
     norm_img = img / 255.0
@@ -61,10 +62,14 @@ if __name__ == "__main__":
 
     run_print_model(weights_file_path)
 
+    for name, param in state_dict.items():
+        print(f"Layer: {name}")
+        print(param)
+        print()
     # Call the function with the C array and its length
-    run_trained_model(input_c_array)
+    #run_trained_model(input_c_array)
 
     # Convert the NumPy array to a PyTorch tensor
-    norm_img_tensor = torch.from_numpy(norm_img.reshape(-1,784)).float()
+    norm_img_tensor = torch.from_numpy(norm_img.reshape(-1,16)).float()
 
     print(encoder.forward(norm_img_tensor))

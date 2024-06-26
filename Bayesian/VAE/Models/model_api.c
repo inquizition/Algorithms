@@ -16,12 +16,7 @@ void run_print_model(char * weights_file)
     
     PTNLM *non_linear_model = InitTrainedNLM_Model();
     load_trained_weights(non_linear_model, "Bayesian/VAE/Models/vae_weights.bin");
-    print_encoder_layer_0(non_linear_model);
-    print_encoder_layer_1(non_linear_model);
-    print_encoder_layer_2(non_linear_model);
-    print_decoder_layer_0(non_linear_model);
-    print_decoder_layer_1(non_linear_model);
-    
+   
     freeTrainedNonLinear(non_linear_model);
 }
 
@@ -53,6 +48,11 @@ void run_trained_model(double *image)
     
     PTNLM *non_linear_model = InitTrainedNLM_Model();
     load_trained_weights(non_linear_model, "Bayesian/VAE/Models/vae_weights.bin");
+
+    for(i = 0; i < ENCODER_LAYERS + DECODER_LAYERS; i++)
+    {
+	print_layer(non_linear_model, i);
+    }
     
     encode(*non_linear_model, mat_img);
     

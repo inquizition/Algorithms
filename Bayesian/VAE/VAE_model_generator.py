@@ -82,9 +82,29 @@ def generate_weight_load_c_code(module, name, params):
     i = 0
     for layer, dim in zip(module.children(), params):
         if isinstance(layer, nn.Linear):
-            layers.append(f'load_weights(filename, &model->{name}_layer_{i}->A[0], {layer.in_features} * {layer.out_features});')
-            layers.append(f'load_weights(filename, &model->{name}_layer_{i}->b[0], {layer.out_features});')
+            layers.append(f'offset += load_weights(filename, &model->{name}_layer_{i}->A[0], {layer.in_features} * {layer.out_features}, offset);')
+            layers.append(f'offset += load_weights(filename, &model->{name}_layer_{i}->b[0], {layer.out_features}, offset);')
             i += 1
+    return layers
+
+def generate_func_iterator_c_code(module, name, params):
+    layers = []
+    i = 0
+    for layer, dim in zip(module.children(), params):
+        if isinstance(layer, nn.Linear):
+            layers.append(f'    {{.name="{name}_layer_{i}", .print_func=print_{name}_layer_{i}, .dump_func=dump_{name}_layer_{i} }},\n')
+            i +=1
+
+    return layers
+
+def generate_func_dump_iterator_c_code(module, name, params):
+    layers = []
+    i = 0
+    for layer, dim in zip(module.children(), params):
+        if isinstance(layer, nn.Linear):
+            layers.append(f'    {{.name="print_{name}_layer_{i}", .dump_func=dump_{name}_layer_{i} }},\n')
+            i +=1
+
     return layers
 
 def generate_print_model_c_code(module, name, params):
@@ -92,35 +112,66 @@ def generate_print_model_c_code(module, name, params):
     i = 0
     for layer, dim in zip(module.children(), params):
         if isinstance(layer, nn.Linear):
-            layers.append(f'void print_{name}_layer_{i}( PTNLM* model )')
+            layers.append(f'static void print_{name}_layer_{i}( PTNLM* model )')
             layers.append(f'{{')
             layers.append(f'    print_linear(model->{name}_layer_{i});')
-            layers.append(f'    print_matrix(*model->{name}_layer_{i}->A, "A:");')
+            layers.append(f'    print_matrix(*model->{name}_layer_{i}->A, "\\nA:");')
             layers.append(f'    print_matrix(*model->{name}_layer_{i}->b, "b:");')
             layers.append(f'}}')
             i +=1
     return layers
 
-
-def generate_print_model_h_code(module, name):
+def generate_dump_model_c_code(module, name, params):
     layers = []
     i = 0
-    for layer in module.children():
+    for layer, dim in zip(module.children(), params):
         if isinstance(layer, nn.Linear):
-            layers.append(f'void print_{name}_layer_{i}( PTNLM* model );\n')
+            layers.append(f'\nstatic double dump_{name}_layer_{i}( PTNLM* model, char matrix, int r, int c )')
+            layers.append(f'{{')
+            layers.append(f'    if(matrix == \'A\') {{')
+            layers.append(f'        if((r > model->{name}_layer_{i}->A->rows) || (c > model->{name}_layer_{i}->A->columns)) {{')
+            layers.append(f'            printf("Rows/columns out of bounds!");')
+            layers.append(f'        }}')
+            layers.append(f'        return model->{name}_layer_{i}->A->data[r][c];')
+            layers.append(f'    }}')
+            layers.append(f'    else if(matrix == \'b\') {{')
+            layers.append(f'        if((r > model->{name}_layer_{i}->b->rows) || (c > model->{name}_layer_{i}->b->columns)) {{')
+            layers.append(f'            printf("Rows/columns out of bounds!");')
+            layers.append(f'        }}')
+            layers.append(f'        return model->{name}_layer_{i}->b->data[r][c];')
+            layers.append(f'    }}')
+            layers.append(f'    printf("Invalid Matix choice!");')
+            layers.append(f'    return 0.0;')
+            layers.append(f'}}')
             i +=1
     return layers
 
 def save_weights_to_binary(model, filename):
-    with open(filename, 'wb') as f:
+    with open(filename, 'wb') as bin_f:
         for name, param in model.named_parameters():
             weight = param.detach().numpy()
-            weight.tofile(f)
+            weight = weight.astype(np.float64);
+            weight.tofile(bin_f)
 
-input_dim=784
-hidden_dim = 512
-hidden_dim_2 = 400
-latent_dim=20
+def save_test_files(model, test_filenames):
+    for filename in test_filenames:
+        with open(filename, 'w') as txt_f:
+            for name, param in model.named_parameters():
+                #txt_f.write(f"{param.row}\n")
+                weight = param.detach().numpy()
+                weight = weight.astype(np.float64);
+                txt_f.write(f"{np.shape(weight)[0]}\n")
+                if(len(np.shape(weight))==2):
+                    txt_f.write(f"{np.shape(weight)[1]}\n")
+                else:
+                    txt_f.write(f"1\n")
+                for val in weight.flatten():
+                    txt_f.write(f"{val}\n")
+
+input_dim=16
+hidden_dim = 4
+hidden_dim_2 = 4
+latent_dim=2
 
 
 ## For saving model ##
@@ -170,18 +221,29 @@ load_dec_weights_code = generate_weight_load_c_code(decoder_2, "decoder", decode
 model_enc_print_code = generate_print_model_c_code(encoder_2, "encoder", encoder_params)
 model_dec_print_code = generate_print_model_c_code(decoder_2, "decoder", decoder_params)
 
+function_iterator_enc = generate_func_iterator_c_code(encoder_2, "encoder", encoder_params)
+function_iterator_dec = generate_func_iterator_c_code(decoder_2, "decoder", decoder_params)
+
+model_enc_dump_code = generate_dump_model_c_code(encoder_2, "encoder", encoder_params)
+model_dec_dump_code = generate_dump_model_c_code(decoder_2, "decoder", decoder_params)
+
+function_dump_iterator_enc = generate_func_dump_iterator_c_code(encoder_2, "encoder", encoder_params)
+function_dump_iterator_dec = generate_func_dump_iterator_c_code(decoder_2, "decoder", decoder_params)
+
 save_weights_to_binary(model_2, 'Bayesian/VAE/Models/vae_weights.bin')
+save_test_files(model_2, ['Bayesian/VAE/Tests/data/vae_weights.txt'])
 
 with open('Bayesian/VAE/Models/model.c', 'w') as f:
     f.write('#include \"model.h\"\n')
-    f.write('static void load_weights(char *filename, Matrix *m, size_t size)\n{\n')
+    f.write('static size_t load_weights(char *filename, Matrix *m, size_t size, size_t offset)\n{\n')
     f.write('    double *weights = (double *)malloc(size * sizeof(double));\n')
     f.write('    FILE *f = fopen(filename, "rb");\n')
     f.write('    if (!f) {\n')
     f.write('        fprintf(stderr, "Error opening weights file\\n");\n')
     f.write('        exit(1);\n')
     f.write('    }\n')
-    f.write('    fread(weights, sizeof(double), size, f);\n')
+    f.write('    fseek(f, offset * sizeof(double), SEEK_SET);\n')
+    f.write('    size_t read_count = fread(weights, sizeof(double), size, f);\n')
     f.write('    fclose(f);\n\n')
     f.write('    int rows = m->rows;\n')
     f.write('    int columns = m->columns;\n\n')
@@ -191,6 +253,7 @@ with open('Bayesian/VAE/Models/model.c', 'w') as f:
     f.write('        }\n')
     f.write('    }\n\n')
     f.write('    free(weights);\n')
+    f.write('    return read_count;\n')
     f.write('}\n')
 
     f.write(f'PTNLM *InitTrainedNLM_Model(void)\n')
@@ -217,6 +280,7 @@ with open('Bayesian/VAE/Models/model.c', 'w') as f:
 
     f.write('void load_trained_weights(PTNLM *model, char *filename)\n{\n')
     f.write('    ')
+    f.write('\n    size_t offset = 0;')
     f.write('\n    '.join(load_enc_weights_code + load_dec_weights_code))
     f.write('\n}\n')
 
@@ -227,9 +291,21 @@ with open('Bayesian/VAE/Models/model.c', 'w') as f:
     f.write('\n}\n')
 
     f.write('\n'.join(model_enc_print_code + model_dec_print_code))
+    f.write('\n'.join(model_enc_dump_code + model_dec_dump_code))
 
-head_code_enc_print_functions = generate_print_model_h_code(encoder_2, "encoder")
-head_code_dec_print_functions = generate_print_model_h_code(decoder_2, "decoder")
+    f.write('layer_func_t cfuncs[] = {\n');
+    f.write('   '.join(function_iterator_enc + function_iterator_dec));
+    f.write(f'    {{.name=NULL}}\n')
+    f.write('};\n');
+
+    f.write('void print_layer(PTNLM *model, int layer)\n{\n')
+    f.write('\n    printf("%s", cfuncs[layer].name);')
+    f.write('\n    cfuncs[layer].print_func(model);')
+    f.write('\n}\n')
+
+    f.write('double dump_layer(PTNLM *model, int layer, char matrix, int r, int c)\n{\n')
+    f.write('\n    return cfuncs[layer].dump_func(model, matrix, r, c);')
+    f.write('\n}\n')
 
 with open('Bayesian/VAE/Models/model.h', 'w') as f:
     f.write('#ifndef MODEL_H\n#define MODEL_H\n\n')
@@ -250,10 +326,21 @@ with open('Bayesian/VAE/Models/model.h', 'w') as f:
     f.write('}PTNLM;\n')
     f.write('\n')
 
+    f.write('\n')
+    f.write('typedef struct\n{\n')
+    f.write('    char *name;\n')
+    f.write('    void (*print_func)(PTNLM *);\n')
+    f.write('    double (*dump_func)(PTNLM *, char matrix, int r, int c);\n')
+    f.write('}layer_func_t;\n')
+    f.write('\n')
+
     f.write('void decode(PTNLM model, Matrix *z);\n')
     f.write('\n')
     f.write('void encode(PTNLM model, Matrix *x);\n')
     f.write('\n')
+
+    f.write('void print_layer(PTNLM *model, int layer);\n')
+    f.write('double dump_layer(PTNLM *model, int layer, char matrix, int r, int c);\n')
 
     f.write(f'PTNLM *InitTrainedNLM_Model(void);\n')
     f.write('\n')
@@ -261,7 +348,6 @@ with open('Bayesian/VAE/Models/model.h', 'w') as f:
     f.write('\n')
     f.write('void freeTrainedNonLinear(PTNLM *model);\n')
     f.write('\n')
-    f.write('\n'.join(head_code_enc_print_functions + head_code_dec_print_functions))
 
     f.write('\n\n#endif // MODEL_H\n')
 

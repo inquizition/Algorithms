@@ -22,6 +22,7 @@ enable_testing()
 add_test(Matrix_test 		test_folder/MatrixTest)
 add_test(LinearModel_test 	test_folder/LinearModelTest)
 add_test(NonLinearModel_test 	test_folder/NonLinearModelTest)
+add_test(TrainedModel_test 	test_folder/TrainedModelTest)
 
 find_library(MATH_LIBRARY m)
 
@@ -44,5 +45,9 @@ target_include_directories(LinearModelTest PUBLIC
 	"${PROJECT_SOURCE_DIR}/test_folder")
 
 target_include_directories(NonLinearModelTest PUBLIC
+	"${PROJECT_BINARY_DIR}"
+	"${PROJECT_SOURCE_DIR}/test_folder")
+
+target_include_directories(TrainedModelTest PUBLIC
 	"${PROJECT_BINARY_DIR}"
 	"${PROJECT_SOURCE_DIR}/test_folder")
