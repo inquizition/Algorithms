@@ -2,6 +2,8 @@
 
 static CU_TestInfo test_cases[] = {
     { "test_import_trained_model", test_import_trained_model },
+    { "test_encode", test_encode },
+    { "test_decode", test_decode },
     CU_TEST_INFO_NULL,
 };
 

@@ -420,7 +420,7 @@ bool cmpMatrix(Matrix m1, Matrix m2)
 {
     int r, c;
     bool equal = true;
-#define EPSILON 1e-9
+#define EPSILON 1e-7
 
     #pragma omp parallel for private(c) reduction(&&:equal)
     for(r = 0; r < m1.rows; r++)

@@ -50,7 +50,7 @@ void decode(NLM model, Matrix *z)
 	Linear(model.decoder_fc2, model.decoder_fc1->output);
 }
 
-void encode(NLM model, Matrix *x)
+void encode(NLM model, Matrix *x, Matrix *z)
 {
 	Linear(model.encoder_fc1, x);
 	Matrix *output_relu = allocateMatrix(
@@ -58,13 +58,13 @@ void encode(NLM model, Matrix *x)
 			model.encoder_fc1->output->columns);
 	copyMatrix(*model.encoder_fc1->output, output_relu);
 	reLu_matrix(output_relu);
-	Linear(model.encoder_mean_fc1, output_relu);
+	Linear(model.encoder_mean_fc2, output_relu);
 	Linear(model.encoder_logsigma_2, output_relu);
+	copyMatrix(*model->encoder_mean_fc2->output, z);
 }
 
 static double cost_function(Matrix *x, VAE *model)
 {
-	encode(*model, x);
 	// Updates z_mu and z_logsigma2
 	Matrix *z_mu = allocateMatrix(
 			model->encoder_mean_fc2->output->rows,
@@ -72,7 +72,8 @@ static double cost_function(Matrix *x, VAE *model)
 	Matrix *z_logsigma2 = allocateMatrix(
 			model->encoder_logsigma_2->output->rows,
 			model->encoder_logsigma_2->output->columns);
-	copyMatrix(*model->encoder_mean_fc2->output, z_mu);
+
+	encode(*model, x, z_mu);
 	copyMatrix(*model->encoder_logsigma_2_fc2, z_logsigma2);
 
 	kl = kl_divergence(, z_logsigma2);
@@ -94,12 +95,3 @@ static double kl_divergence_term(double *z_mu, double *z_logsigma_2)
 	return term;
 }
 
-static void encode(double *x)
-{
-	double h1 = relu(model)
-}
-
-static void decode(double *z);
-{
-
-}

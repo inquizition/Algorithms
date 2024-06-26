@@ -43,6 +43,8 @@ void run_trained_model(double *image)
     }	
     
     Matrix *mat_img = allocateMatrix(1,784);
+    Matrix *z = allocateMatrix(1,2);
+    Matrix *logvar = allocateMatrix(1,2);
     fillMatrix(mat_img, image);
     //print_matrix(*mat_img);
     
@@ -54,10 +56,12 @@ void run_trained_model(double *image)
 	print_layer(non_linear_model, i);
     }
     
-    encode(*non_linear_model, mat_img);
+    encode(*non_linear_model, mat_img, z, logvar);
     
     print_matrix(*(non_linear_model->encoder_layer_1->output), "mu:");
     print_matrix(*(non_linear_model->encoder_layer_2->output), "logvar");
     freeTrainedNonLinear(non_linear_model);
     freeMatrix(mat_img);
+    freeMatrix(z);
+    freeMatrix(logvar);
 }
