@@ -50,8 +50,9 @@ def generate_decode_c_code(module, name, params):
                 layers.append(f'copyMatrix(*model.{name}_layer_{i}->output, output_relu);')
                 layers.append(f'reLu_matrix(output_relu);')
             else:
-                layers.append(f'Linear(model.{name}_layer_{i}, model.{name}_layer_{0}->output);')
+                layers.append(f'Linear(model.{name}_layer_{i}, output_relu);')
             i += 1
+    layers.append(f'sigmoid_matrix(model.{name}_layer_{i-1}->output);')
     layers.append(f'copyMatrix(*model.{name}_layer_{i-1}->output, output_mu);')
     return layers
 

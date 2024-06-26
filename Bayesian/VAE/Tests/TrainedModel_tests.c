@@ -132,7 +132,7 @@ void test_decode(void)
     Matrix *logvar = allocateMatrix(1,LATENT_DIM);
     size_t offset = 0;
 
-    offset += read_reference_text_file(text_filename, ref_values, LATENT_DIM, offset);
+    offset += read_reference_text_file(text_filename, ref_values, INPUT_DIM, offset);
     fillMatrix(x_hat_expected, ref_values);
 
     load_test_img_data(norm_img);

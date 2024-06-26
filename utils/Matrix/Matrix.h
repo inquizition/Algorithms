@@ -53,6 +53,7 @@ void hadamard_prod(Matrix m1, Matrix m2, Matrix* res);
 void matrixSubtract(Matrix matrix, Matrix a, Matrix *res);
 
 void reLu_matrix(Matrix *m);
+void sigmoid_matrix(Matrix *m);
 void exp_matrix(Matrix *m);
 void const_mult_matrix(Matrix *m, double c);
 void matrix_pow(Matrix *m, int power);

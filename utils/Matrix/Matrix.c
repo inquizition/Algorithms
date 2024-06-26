@@ -102,6 +102,20 @@ void reLu_matrix(Matrix *m)
     }
 }
 
+void sigmoid_matrix(Matrix *m)
+{
+    int r, c;
+
+    #pragma omp parallel for private(c)
+    for(r = 0; r < m->rows; r++)
+    {
+        for(c = 0; c < m->columns; c++)
+        {
+            m->data[r][c] = 1.0/(1.0 + exp(-m->data[r][c]));
+        }
+    }
+}
+
 void d_reLu_matrix(Matrix *m)
 {
     int r, c;
