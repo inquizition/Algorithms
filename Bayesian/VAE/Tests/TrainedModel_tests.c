@@ -44,7 +44,6 @@ void test_import_trained_model(void)
 		{
 			if(fscanf(f, "%lf", &file_value) != 1)
 			{
-				fclose(f);
 				break;
 			}
 
@@ -55,6 +54,7 @@ void test_import_trained_model(void)
 	rows = file_value;
 	res = fscanf(f, "%lf", &file_value);
 	columns = file_value;
+	double imported_model_val;
 
 	for(int i = 0; i < rows; i++)
 	{
@@ -62,10 +62,14 @@ void test_import_trained_model(void)
 		{
 			if(fscanf(f, "%lf", &file_value) != 1)
 			{
-				fclose(f);
 				break;
 			}
-			CU_ASSERT_EQUAL(dump_layer_weights(non_linear_model, layer, 'b', i, j), file_value);
+			imported_model_val = dump_layer_weights(non_linear_model, layer, 'b', i, j);
+			CU_ASSERT_EQUAL(imported_model_val, file_value);
+			if(imported_model_val != file_value)
+			{
+				printf("Expected val: %.10f, read val: %.10f\n", file_value, imported_model_val);
+			}
 		}
 	}
 	layer++;
@@ -108,19 +112,18 @@ void test_encode(void)
     CU_ASSERT_TRUE(cmpMatrix(*z, *z_expected));
     CU_ASSERT_TRUE(cmpMatrix(*logvar, *logvar_expected));
 
-    freeTrainedNonLinear(non_linear_model);
     freeMatrix(mat_img);
     freeMatrix(z);
     freeMatrix(logvar);
     freeMatrix(z_expected);
     freeMatrix(logvar_expected);
+    freeTrainedNonLinear(non_linear_model);
 }
 
 void test_decode(void)
 {
     registerExitHandler();
     const char *text_filename = "../Bayesian/VAE/Tests/data/vae_decode.txt";
-
 
     double ref_values[INPUT_DIM];
     double norm_img[INPUT_DIM];

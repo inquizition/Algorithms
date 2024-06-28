@@ -31,6 +31,7 @@ class VAE(nn.Module):
         super(VAE, self).__init__()
         self.encoder = encoder
         self.decoder = decoder
+        self.logsigma2 = nn.Parameter(torch.zeros(1)) 
 
     def reparameterize(self, mu, logvar):
         std = torch.exp(0.5 * logvar)
@@ -40,7 +41,7 @@ class VAE(nn.Module):
     def encode(self, x):
         mu, logvar = self.encoder(x)
         z = self.reparameterize(mu, logvar)
-        return z, mu, logvar
+        return mu, logvar
 
     def decode(self, z):
         x_hat = self.decoder(z)

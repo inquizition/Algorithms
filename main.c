@@ -37,9 +37,7 @@ int main(void)
 		for(j = 0; j < 28; j++)
 		{
 	   		norm_img[j + (i*28)] = img[j + (i*28)]/255.0;
-			//printf("%d  ", img[j + (i*28)]);
 		}
-		//printf("\n");
 	}	
 
 	//Matrix *mat_img = allocateMatrix(1,784);

@@ -6,17 +6,30 @@ import struct
 from torch import nn
 from torch.nn import functional as F
 from torchsummary import summary
+# Now you can import modules from the parent directory
+from VAE import Encoder, Decoder, VAE
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
 print(parent_dir)
 
-# Now you can import modules from the parent directory
-from VAE import Encoder, Decoder, VAE
-
 number_of_encoder_layers = 0
 number_of_decoder_layers = 0
 
+# Load the model with metadata
+checkpoint = torch.load('vae_model.pth')
+encoder_params = checkpoint['encoder_params']
+decoder_params = checkpoint['decoder_params']
+
+encoder_2 = Encoder(*encoder_params)
+decoder_2 = Decoder(*decoder_params)
+model_2 = VAE(encoder_2, decoder_2)
+model_2.load_state_dict(checkpoint['model_state_dict'])
+
+enc_in_dim = encoder_params[0]
+enc_hid_dim = encoder_params[1]
+enc_lat_dim = encoder_params[2]
+dec_hid_dim = decoder_params[1]
 
 def generate_layers_c_code(module, name, params):
     layers = []
@@ -126,18 +139,20 @@ def generate_dump_model_weights_c_code(module, name, params):
             layers.append(f'{{')
             layers.append(f'    if(matrix == \'A\') {{')
             layers.append(f'        if((r > model->{name}_layer_{i}->A->rows) || (c > model->{name}_layer_{i}->A->columns)) {{')
-            layers.append(f'            printf("Rows/columns out of bounds!");')
+            layers.append(f'            printf("Matrix A {name}_layer_{i} rows/columns out of bounds!");')
+            layers.append(f'            exit(1);')
             layers.append(f'        }}')
             layers.append(f'        return model->{name}_layer_{i}->A->data[r][c];')
             layers.append(f'    }}')
             layers.append(f'    else if(matrix == \'b\') {{')
             layers.append(f'        if((r > model->{name}_layer_{i}->b->rows) || (c > model->{name}_layer_{i}->b->columns)) {{')
-            layers.append(f'            printf("Rows/columns out of bounds!");')
+            layers.append(f'            printf("Matrix b {name}_layer_{i} rows/columns out of bounds!");')
+            layers.append(f'            exit(1);')
             layers.append(f'        }}')
             layers.append(f'        return model->{name}_layer_{i}->b->data[r][c];')
             layers.append(f'    }}')
             layers.append(f'    printf("Invalid Matix choice!");')
-            layers.append(f'    return 0.0;')
+            layers.append(f'    exit(1);')
             layers.append(f'}}')
             i +=1
     return layers
@@ -150,100 +165,18 @@ def generate_dump_model_outputs_c_code(module, name, params):
             layers.append(f'\nstatic double dump_outputs_{name}_layer_{i}( PTNLM* model, int r, int c )')
             layers.append(f'{{')
             layers.append(f'    if((r > model->{name}_layer_{i}->output->rows) || (c > model->{name}_layer_{i}->output->columns)) {{')
-            layers.append(f'        printf("Rows/columns out of bounds!");')
+            layers.append(f'        printf("{name}_layer_{i} output rows/columns out of bounds!");')
+            layers.append(f'        exit(1);')
             layers.append(f'    }}')
             layers.append(f'    if(model->{name}_layer_{i}->output_init) {{')
             layers.append(f'        return model->{name}_layer_{i}->output->data[r][c];')
             layers.append(f'    }}')
             layers.append(f'    printf("No output found!");')
-            layers.append(f'    return 0.0;')
+            layers.append(f'    exit(1);')
             layers.append(f'}}')
             i +=1
     return layers
 
-def save_weights_to_binary(model, filename):
-    with open(filename, 'wb') as bin_f:
-        for name, param in model.named_parameters():
-            weight = param.detach().numpy()
-            weight = weight.astype(np.float64);
-            weight.tofile(bin_f)
-
-def save_test_files(model, test_filenames):
-    for filename in test_filenames:
-        with open(filename, 'w') as txt_f:
-            for name, param in model.named_parameters():
-                #txt_f.write(f"{param.row}\n")
-                weight = param.detach().numpy()
-                weight = weight.astype(np.float64);
-                txt_f.write(f"{np.shape(weight)[0]}\n")
-                if(len(np.shape(weight))==2):
-                    txt_f.write(f"{np.shape(weight)[1]}\n")
-                else:
-                    txt_f.write(f"1\n")
-                for val in weight.flatten():
-                    txt_f.write(f"{val}\n")
-
-def save_values_to_binary(tensor, filename):
-    with open(filename, 'w') as txt_f:
-        for val in tensor:
-            res = val.detach().numpy()
-            res = res.astype(np.float64);
-            for v in res.flatten():
-                txt_f.write(f"{v}\n")
-
-def read_image(file_path):
-
-    SIZE = 28 * 28  # 28x28 image
-    img = []
-    
-    with open(file_path, 'rb') as file:
-        for _ in range(SIZE):
-            # Read 4 bytes at a time (size of an int in C)
-            data = file.read(4)
-            if not data:
-                break
-            # Unpack the binary data to an integer
-            value = struct.unpack('i', data)[0]
-            img.append(value)
-    
-    return img
-
-def normalize_image(img):
-    norm_img = [pixel / 255.0 for pixel in img]
-    return norm_img
-
-input_dim= 28*28
-hidden_dim = 40
-hidden_dim_2 = 40
-latent_dim=2
-
-
-## For saving model ##
-encoder = Encoder(input_dim, hidden_dim, latent_dim)
-decoder = Decoder(latent_dim, hidden_dim_2, input_dim)
-model = VAE(encoder, decoder)
-
-torch.save({
-    'model_state_dict': model.state_dict(),
-    'encoder_params': (input_dim, hidden_dim, latent_dim),
-    'decoder_params': (latent_dim, hidden_dim_2, input_dim)
-}, 'vae_model.pth')
-## Saving model end ##
-
-# Load the model with metadata
-checkpoint = torch.load('vae_model.pth')
-encoder_params = checkpoint['encoder_params']
-decoder_params = checkpoint['decoder_params']
-
-encoder_2 = Encoder(*encoder_params)
-decoder_2 = Decoder(*decoder_params)
-model_2 = VAE(encoder_2, decoder_2)
-model_2.load_state_dict(checkpoint['model_state_dict'])
-
-enc_in_dim = encoder_params[0]
-enc_hid_dim = encoder_params[1]
-enc_lat_dim = encoder_params[2]
-dec_hid_dim = decoder_params[1]
 
 encoder_layers = generate_layers_c_code(encoder_2, "encoder", encoder_params)
 encode_code = generate_encode_c_code(encoder_2, "encoder", encoder_params)
@@ -274,22 +207,6 @@ model_dec_dump_code = generate_dump_model_weights_c_code(decoder_2, "decoder", d
 
 function_dump_output_enc_code = generate_dump_model_outputs_c_code(encoder_2, "encoder", encoder_params)
 function_dump_output_dec_code = generate_dump_model_outputs_c_code(decoder_2, "decoder", decoder_params)
-
-save_weights_to_binary(model_2, 'Bayesian/VAE/Models/vae_weights.bin')
-save_test_files(model_2, ['Bayesian/VAE/Tests/data/vae_weights.txt'])
-
-img = read_image('data/img.bin')
-norm_img = normalize_image(img)
-# Convert the normalized image list to a NumPy array
-norm_img_np = np.array(norm_img)  # Reshape to 28x28
-
-# Convert the NumPy array to a PyTorch tensor
-norm_img_tensor = torch.tensor(norm_img_np, dtype=torch.float32)
-res = model_2.encode(norm_img_tensor)
-save_values_to_binary(res[1:3], 'Bayesian/VAE/Tests/data/vae_encode.txt')
-
-print(model_2.decode(res[1]))
-save_values_to_binary(model_2.decode(res[1]), 'Bayesian/VAE/Tests/data/vae_decode.txt')
 
 with open('Bayesian/VAE/Models/model.c', 'w') as f:
     f.write('#include \"model.h\"\n')
