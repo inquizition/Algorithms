@@ -7,7 +7,45 @@ static void registerExitHandler(void)
     atexit(freeAllMatrices);
 }
 
+void encode_data(double *data, double *encoded_data)
+{
+    registerExitHandler();
 
+    PTNLM *non_linear_model = InitTrainedNLM_Model();
+    Matrix *mat_img = 		allocateMatrix(1,INPUT_DIM);
+    Matrix *z = 		allocateMatrix(1,LATENT_DIM);
+    Matrix *logvar = 		allocateMatrix(1,LATENT_DIM);
+
+    fillMatrix(mat_img, data);
+    load_trained_weights(non_linear_model, "../Bayesian/VAE/Models/vae_weights.bin");
+    encode(*non_linear_model, mat_img, z, logvar);
+
+    dump_matrix(z, encoded_data);
+
+    freeMatrix(mat_img);
+    freeMatrix(z);
+    freeMatrix(logvar);
+    freeTrainedNonLinear(non_linear_model);
+}
+
+void decode_data(double *encoded_data, double *decoded_data)
+{
+    registerExitHandler();
+
+    PTNLM *non_linear_model = InitTrainedNLM_Model();
+    Matrix *z = 		allocateMatrix(1,LATENT_DIM);
+    Matrix *x_hat = 		allocateMatrix(1,INPUT_DIM);
+
+    fillMatrix(z, encoded_data);
+    load_trained_weights(non_linear_model, "../Bayesian/VAE/Models/vae_weights.bin");
+    decode(*non_linear_model, z, x_hat);
+
+    dump_matrix(x_hat, decoded_data);
+
+    freeMatrix(z);
+    freeMatrix(x_hat);
+    freeTrainedNonLinear(non_linear_model);
+}
 
 void run_print_model(char * weights_file)
 {

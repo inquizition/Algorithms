@@ -14,13 +14,13 @@ NLM *InitNLM(int a, int b, int c)
 
 void decode_2(NLM model, Matrix *z)
 {
-	Linear(model.decoder_fc1, z);
+	Linear(model.decoder_fc1, *z);
 	Matrix *output_relu = allocateMatrix(
 			model.decoder_fc1->output->rows,
 			model.decoder_fc1->output->columns);
 	copyMatrix(*model.decoder_fc1->output, output_relu);
 	reLu_matrix(output_relu);
-	Linear(model.decoder_fc2, model.decoder_fc1->output);
+	Linear(model.decoder_fc2, *model.decoder_fc1->output);
 }
 
 void sample_decode(NLM *model, int k)

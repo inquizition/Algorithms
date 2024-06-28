@@ -58,15 +58,16 @@ def generate_decode_c_code(module, name, params):
     for layer, dim in zip(module.children(), params):
         if isinstance(layer, nn.Linear):
             if (i == 0):
-                layers.append(f'Linear(model.{name}_layer_{i}, z);')
+                layers.append(f'Linear(model.{name}_layer_{i}, *z);')
                 layers.append(f'Matrix *output_relu = allocateMatrix( model.{name}_layer_{i}->output->rows, model.{name}_layer_{i}->output->columns);')
                 layers.append(f'copyMatrix(*model.{name}_layer_{i}->output, output_relu);')
                 layers.append(f'reLu_matrix(output_relu);')
             else:
-                layers.append(f'Linear(model.{name}_layer_{i}, output_relu);')
+                layers.append(f'Linear(model.{name}_layer_{i}, *output_relu);')
             i += 1
     layers.append(f'sigmoid_matrix(model.{name}_layer_{i-1}->output);')
     layers.append(f'copyMatrix(*model.{name}_layer_{i-1}->output, output_mu);')
+    layers.append(f'free(output_relu);')
     return layers
 
 def generate_encode_c_code(module, name, params):
@@ -75,16 +76,17 @@ def generate_encode_c_code(module, name, params):
     for layer, dim in zip(module.children(), params):
         if isinstance(layer, nn.Linear):
             if (i == 0): 
-                layers.append(f'Linear(model.{name}_layer_{i}, x);')
+                layers.append(f'Linear(model.{name}_layer_{i}, *x);')
                 layers.append(f'Matrix *output_relu = allocateMatrix( model.{name}_layer_{i}->output->rows, model.{name}_layer_{i}->output->columns);')
                 layers.append(f'copyMatrix(*model.{name}_layer_{i}->output, output_relu);')
                 layers.append(f'reLu_matrix(output_relu);')
             else:
-                layers.append(f'Linear(model.{name}_layer_{i}, output_relu);')
+                layers.append(f'Linear(model.{name}_layer_{i}, *output_relu);')
             i += 1
 
     layers.append(f'copyMatrix(*model.{name}_layer_{i-2}->output, output_mu);')
     layers.append(f'copyMatrix(*model.{name}_layer_{i-1}->output, output_logvar);')
+    layers.append(f'free(output_relu);')
     return layers
 
 def generate_NLM_h_code(module, name):

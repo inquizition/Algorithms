@@ -48,6 +48,13 @@ int main( void )
     CU_basic_run_tests();
     CU_pRunSummary runSummary = CU_get_run_summary();
     unsigned int numTestsFailed = runSummary->nTestsFailed + runSummary->nAssertsFailed;
+
+    CU_pFailureRecord failure = CU_get_failure_list();
+    while (failure) {
+        numTestsFailed++;
+        failure = failure->pNext;
+    }
+
     CU_cleanup_registry();
 
     if (numTestsFailed > 0)

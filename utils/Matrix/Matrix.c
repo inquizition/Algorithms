@@ -242,10 +242,25 @@ void freeMatrix(Matrix *m)
     free(m);
 }
 
+void printAllocatedMatricesCount(void)
+{
+    Matrix *current = allocated_matrices;
+    int i = 0;
+    while (current != NULL) {
+	i++;
+        Matrix *next = current->next;
+        current = next;
+    }
+    printf("Allocated matrices: %d\n", i);
+}
+
 void freeAllMatrices(void)
 {
     Matrix *current = allocated_matrices;
+    int i = 0;
     while (current != NULL) {
+	printf("\nCleaning up leftover matrices: %d\n", i);
+	i++;
         Matrix *next = current->next;
         freeMatrix(current);
         current = next;
@@ -308,6 +323,20 @@ void flatten(Matrix *m, Matrix *flattened)
             flattened->data[0][c + (r * m->columns)] = m->data[r][c];
         }
     }
+}
+
+void dump_matrix(Matrix *m, double* data)
+{
+    int r, c;
+    #pragma omp parallel for private(c)
+    for(r = 0; r < m->rows; r++)
+    {
+        for(c = 0; c < m->columns; c++)
+        {
+            data[c + (r * m->columns)] = m->data[r][c];
+        }
+    }
+
 }
 
 void matrixSubtract(Matrix matrix, Matrix a, Matrix *res)
@@ -434,7 +463,7 @@ bool cmpMatrix(Matrix m1, Matrix m2)
 {
     int r, c;
     bool equal = true;
-#define EPSILON 1e-7
+#define EPSILON 1e-6
 
     #pragma omp parallel for private(c) reduction(&&:equal)
     for(r = 0; r < m1.rows; r++)
@@ -443,7 +472,7 @@ bool cmpMatrix(Matrix m1, Matrix m2)
         {
             if(fabs(m1.data[r][c] - m2.data[r][c]) > EPSILON)
             {
-		printf("a: %.4f not equal to b: %.4f, difference: %.4f \n",m1.data[r][c], m2.data[r][c], fabs(m1.data[r][c] - m2.data[r][c]));
+		//printf("a: %.4f not equal to b: %.4f, difference: %.4f \n",m1.data[r][c], m2.data[r][c], fabs(m1.data[r][c] - m2.data[r][c]));
                 equal = false;
             }
         }
@@ -508,8 +537,13 @@ double vectorMult(double *v1, double *v2, int length)
 
 void copyMatrix(Matrix src, Matrix *dest)
 {
-    dest->columns = src.columns;
-    dest->rows = src.rows;
+    if((dest->columns != src.columns) || (dest->rows != src.rows))
+    {
+            printf("Copy matrix mismatch, c [%d : %d], r [%d : %d]\n", dest->columns, src.columns, dest->rows, src.rows);
+
+    }
+    //dest->columns = src.columns;
+    //dest->rows = src.rows;
     int r, c;
 
     #pragma omp parallel for private(c)

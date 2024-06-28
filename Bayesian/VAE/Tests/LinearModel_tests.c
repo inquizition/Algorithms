@@ -39,7 +39,7 @@ void test_linear(void)
         double input_data[1][8] = {{1.1,2.1,3.1,4.1,5.1,6.1,7.1,8.1}};
 	fillMatrix(input, *input_data);
 
-	Linear(linear, input);
+	Linear(linear, *input);
 
 	Matrix *expected = allocateMatrix(1,4);
         double expected_data[1][4] = {{212.3800, 213.3800, 214.3800, 215.3800}};

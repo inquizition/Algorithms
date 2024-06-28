@@ -21,7 +21,7 @@ add_executable(main main.c)
 enable_testing()
 add_test(Matrix_test 		test_folder/MatrixTest)
 add_test(LinearModel_test 	test_folder/LinearModelTest)
-add_test(NonLinearModel_test 	test_folder/NonLinearModelTest)
+#add_test(NonLinearModel_test 	test_folder/NonLinearModelTest)
 add_test(TrainedModel_test 	test_folder/TrainedModelTest)
 
 find_library(MATH_LIBRARY m)

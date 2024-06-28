@@ -7,5 +7,5 @@
 #include <stdint.h>
 
 void test_import_trained_model(void);
-void test_encode(void);
+void test_encode_decode(void);
 void test_decode(void);

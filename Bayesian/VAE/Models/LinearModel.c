@@ -22,26 +22,30 @@ LM *InitLinear(int a, int b)
 	return model_ptr; 
 }
 
-void Linear(LM *m, Matrix *input)
+void Linear(LM *m, Matrix input)
 {	
 	//printf("Attempting Linear transformation.\n");
 	
-        assert(m->A->columns == input->columns);
+        assert(m->A->columns == input.columns);
 	if(m->output_init)
 	{
-		free(m->output);
+		freeMatrix(m->output);
 	}
-	m->output = allocateMatrix(input->rows, m->A->rows);
+	m->output = allocateMatrix(input.rows, m->A->rows);
 	m->output_init = true;	
 	Matrix *res_temp = allocateMatrix(m->output->rows, m->output->columns);
+	Matrix *A_t = allocateMatrix(m->A->rows, m->A->columns);
+	Matrix *b_t = allocateMatrix(m->b->rows, m->b->columns);
+	copyMatrix(*m->A, A_t);
+	copyMatrix(*m->b, b_t);
 
-	transpose(&m->A);
-	transpose(&m->b);
-	dot(*input,*m->A, (union Result*)res_temp);
-	matrixAdd(*res_temp, *m->b, m->output);
-	transpose(&m->A);
-	transpose(&m->b);
+	transpose(&A_t);
+	transpose(&b_t);
+	dot(input,*A_t, (union Result*)res_temp);
+	matrixAdd(*res_temp, *b_t, m->output);
 	freeMatrix(res_temp);
+	freeMatrix(A_t);
+	freeMatrix(b_t);
 }
 
 void derivate_linear(LM *m, Matrix *error)

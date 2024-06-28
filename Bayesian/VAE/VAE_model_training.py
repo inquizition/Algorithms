@@ -210,9 +210,9 @@ def save_weights_and_test_files(model):
     # Convert the NumPy array to a PyTorch tensor
     norm_img_tensor = torch.tensor(norm_img_np, dtype=torch.float32)
     res = model.encode(norm_img_tensor)
-    save_values_to_binary(res[1:3], 'Bayesian/VAE/Tests/data/vae_encode.txt')
+    save_values_to_binary(res[0:2], 'Bayesian/VAE/Tests/data/vae_encode.txt')
     
-    save_values_to_binary(model.decode(res[1]), 'Bayesian/VAE/Tests/data/vae_decode.txt')
+    save_values_to_binary(model.decode(res[0]), 'Bayesian/VAE/Tests/data/vae_decode.txt')
 
 
 input_dim =     28*28
