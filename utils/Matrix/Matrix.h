@@ -61,4 +61,4 @@ void const_mult_matrix(Matrix *m, double c);
 void matrix_pow(Matrix *m, int power);
 double logsumexp(Matrix *m);
 
-#endif M_MATRIX_H
+#endif // M_MATRIX_H

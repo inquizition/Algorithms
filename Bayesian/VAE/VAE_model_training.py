@@ -76,12 +76,6 @@ def cost_function(X, model):
 
 def train_model(model, train_dataset, test_dataset):
     # define the data loaders
-    # train_dataset.data = train_dataset.data/255
-    # test_dataset.data = test_dataset.data/255
-    # train_data = torch.utils.data.DataLoader(train_dataset, batch_size=500, shuffle=True)
-    # test_data = torch.utils.data.DataLoader(test_dataset, batch_size=500)
-
-    # define the data loaders
     train_data = torch.utils.data.DataLoader(train_dataset, batch_size=400, shuffle=True)
     test_data = torch.utils.data.DataLoader(test_dataset, batch_size=400)
     
@@ -92,14 +86,13 @@ def train_model(model, train_dataset, test_dataset):
     training_loss = []
     test_loss = []
     
-    training_epochs = 1 
+    training_epochs = 20 
     # optimize parameters for 20 epochs
     for i in range(training_epochs):
     
         # for each minibatch
         for x,_ in train_data:
             x = x.reshape(400,28*28)
-            #print((x[0,:]))
             # evaluate the cost function on the training data set
             loss = cost_function(x, model)
     
@@ -134,16 +127,6 @@ def train_model(model, train_dataset, test_dataset):
 
     return model
             
-    # plot loss
-    # plt.figure()
-    # iterations = np.arange(1, len(training_loss) + 1)
-    # plt.scatter(iterations, training_loss, label='training loss')
-    # plt.scatter(iterations, test_loss, label='test loss')
-    # plt.legend()
-    # plt.xlabel('iteration')
-    # plt.show()
-
-
 def save_weights_to_binary(model, filename):
     with open(filename, 'wb') as bin_f:
         for name, param in model.named_parameters():
@@ -216,8 +199,8 @@ def save_weights_and_test_files(model):
 
 
 input_dim =     28*28
-hidden_dim =    40
-hidden_dim_2 =  40
+hidden_dim =    70
+hidden_dim_2 =  50
 latent_dim =    2
 
 ## For saving model ##

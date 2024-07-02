@@ -67,7 +67,7 @@ def generate_decode_c_code(module, name, params):
             i += 1
     layers.append(f'sigmoid_matrix(model.{name}_layer_{i-1}->output);')
     layers.append(f'copyMatrix(*model.{name}_layer_{i-1}->output, output_mu);')
-    layers.append(f'free(output_relu);')
+    layers.append(f'freeMatrix(output_relu);')
     return layers
 
 def generate_encode_c_code(module, name, params):
@@ -86,7 +86,7 @@ def generate_encode_c_code(module, name, params):
 
     layers.append(f'copyMatrix(*model.{name}_layer_{i-2}->output, output_mu);')
     layers.append(f'copyMatrix(*model.{name}_layer_{i-1}->output, output_logvar);')
-    layers.append(f'free(output_relu);')
+    layers.append(f'freeMatrix(output_relu);')
     return layers
 
 def generate_NLM_h_code(module, name):

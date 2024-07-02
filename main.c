@@ -20,14 +20,14 @@ void registerExitHandler(void)
 
 int main(void)
 {
-	//registerExitHandler();
+	registerExitHandler();
 	srand ( time(NULL) );
 	FILE *file;
 	int img[SIZE];
 	double norm_img[28*28];
 
 	file = fopen("data/img.bin", "rb");
-	fread(img, sizeof(int), SIZE, file);
+	size_t read_size = fread(img, sizeof(int), SIZE, file);
 	fclose(file);
 	
 	int i;
@@ -42,7 +42,6 @@ int main(void)
 
 	//Matrix *mat_img = allocateMatrix(1,784);
 	//fillMatrix(mat_img, norm_img);
-	run_trained_model(norm_img);
 	////print_matrix(*mat_img);
 
 	////NLM *non_linear_model = InitNLM(2, 400, 784);

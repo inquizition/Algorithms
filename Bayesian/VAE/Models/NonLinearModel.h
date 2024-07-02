@@ -24,4 +24,4 @@ void printNonLinear(NLM *nonLinear);
 double cost_function(Matrix *X, NLM *model, int K);
 double derivative_cost_function(Matrix *X, NLM *model);
 
-#endif M_NONLINEARMODEL_H
+#endif // M_NONLINEARMODEL_H
