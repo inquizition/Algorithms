@@ -17,7 +17,7 @@ number_of_encoder_layers = 0
 number_of_decoder_layers = 0
 
 # Load the model with metadata
-checkpoint = torch.load('vae_model.pth')
+checkpoint = torch.load('Bayesian/VAE/Models/vae_model.pth')
 encoder_params = checkpoint['encoder_params']
 decoder_params = checkpoint['decoder_params']
 

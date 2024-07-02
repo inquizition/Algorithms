@@ -214,6 +214,6 @@ torch.save({
     'model_state_dict': model.state_dict(),
     'encoder_params': (input_dim, hidden_dim, latent_dim),
     'decoder_params': (latent_dim, hidden_dim_2, input_dim)
-}, 'vae_model.pth')
+}, 'Bayesian/VAE/Models/vae_model.pth')
 
 save_weights_and_test_files(model)
