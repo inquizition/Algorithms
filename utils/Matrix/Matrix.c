@@ -325,15 +325,15 @@ void flatten(Matrix *m, Matrix *flattened)
     }
 }
 
-void dump_matrix(Matrix *m, double* data)
+void dump_matrix(Matrix m, double* data)
 {
     int r, c;
     #pragma omp parallel for private(c)
-    for(r = 0; r < m->rows; r++)
+    for(r = 0; r < m.rows; r++)
     {
-        for(c = 0; c < m->columns; c++)
+        for(c = 0; c < m.columns; c++)
         {
-            data[c + (r * m->columns)] = m->data[r][c];
+            data[c + (r * m.columns)] = m.data[r][c];
         }
     }
 

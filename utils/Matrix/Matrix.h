@@ -37,7 +37,7 @@ void ones(Matrix *matrix);
 void matMult(Matrix m1, Matrix m2, Matrix *res);
 double vectorMult(double *v1, double *v2, int length);
 void flatten(Matrix *m, Matrix *flattened);
-void dump_matrix(Matrix *m, double* data);
+void dump_matrix(Matrix m, double* data);
 void print_matrix(Matrix m, char* header);
 void print_dim(Matrix m);
 

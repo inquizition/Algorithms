@@ -2,6 +2,7 @@ from cffi import FFI
 import os
 import numpy as np
 import sys
+import torch
 
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(parent_dir)
@@ -31,6 +32,11 @@ close_preTrained_model = C.close_preTrained_VAE_model
 decode_data = C.decode_data
 encode_data = C.encode_data
 
+checkpoint = torch.load('Bayesian/VAE/Models/vae_model.pth')
+encoder_params = checkpoint['encoder_params']
+in_dim = encoder_params[0]
+lat_dim = encoder_params[2]
+
 def Initiate_c_VAE_model():
     weights_file_path = ffi.new("char[]", b"Bayesian/VAE/Models/vae_weights.bin")
     init_preTrained_model(weights_file_path)
@@ -39,36 +45,55 @@ def close_c_VAE_model():
     close_preTrained_model()
 
 def c_decoder(encoded_data):
-    decoded_data = np.zeros(28,28) 
+    # Ensure encoded_data is a numpy array
+    encoded_data = np.asarray(encoded_data, dtype=np.double)
+    encoded_data_size = encoded_data.size
 
-    decoded_data = decoded_data.astype(np.double)
-    decoded_data = ffi.from_buffer(decoded_data)
-    decoded_data = ffi.cast("double*", decoded_data)
+    # Prepare decoded_data array
+    decoded_data_size = in_dim  # Example size, adjust as needed
+    decoded_data = np.zeros(decoded_data_size, dtype=np.double)
+    original_shape = decoded_data.shape
 
-    encoded_data = encoded_data.astype(np.double)
-    encoded_data = ffi.from_buffer(encoded_data)
-    encoded_data = ffi.cast("double*", encoded_data)
+    # Prepare the encoded data buffer
+    encoded_data_ffi = ffi.from_buffer(encoded_data)
+    encoded_data_cast = ffi.cast("double*", encoded_data_ffi)
 
-    decode_data(encoded_data, decoded_data)
+    # Prepare the decoded data buffer
+    decoded_data_ffi = ffi.from_buffer(decoded_data)
+    decoded_data_cast = ffi.cast("double*", decoded_data_ffi)
 
-    return decoded_data
+    # Call the C function
+    C.decode_data(encoded_data_cast, decoded_data_cast)
 
-def c_encoder(data):
-    z = np.zeros(1,2)
-    logvar = np.zeros(1,2)
+    # Convert the decoded data back to a numpy array
+    decoded_data_numpy = np.copy(decoded_data).reshape(original_shape)
 
-    z = z.astype(np.double)
-    z = ffi.from_buffer(z)
-    z = ffi.cast("double*", z)
+    return decoded_data_numpy
 
-    logvar = logvar.astype(np.double)
-    logvar = ffi.from_buffer(logvar)
-    logvar = ffi.cast("double*", logvar)
+def c_encoder(in_data):
+    z = np.zeros([1, lat_dim], dtype=np.double)
+    logvar = np.zeros([1, lat_dim], dtype=np.double)
 
-    data = data.astype(np.double)
-    data = ffi.from_buffer(data)
-    data = ffi.cast("double*", data)
+    # Prepare the encoded data buffer for z
+    z_ffi = ffi.from_buffer(z)
+    z_cast = ffi.cast("double*", z_ffi)
 
-    encode_data(data, z, logvar)
+    # Prepare the encoded data buffer for logvar
+    logvar_ffi = ffi.from_buffer(logvar)
+    logvar_cast = ffi.cast("double*", logvar_ffi)
 
-    return z, logvar 
+    # Prepare the input data buffer
+    in_data = np.asarray(in_data, dtype=np.double)
+    data_ffi = ffi.from_buffer(in_data)
+    data_cast = ffi.cast("double*", data_ffi)
+
+    # Call the C function
+    C.encode_data(data_cast, z_cast, logvar_cast)
+
+    # Convert the z data back to a numpy array
+    z_numpy = np.copy(z)
+
+    # Convert the logvar data back to a numpy array
+    logvar_numpy = np.copy(logvar)
+
+    return z_numpy, logvar_numpy

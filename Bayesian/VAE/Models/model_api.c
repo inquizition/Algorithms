@@ -17,7 +17,6 @@ void Init_preTrained_VAE_model(char * weights_file_path)
         return;
     }
     non_linear_model = InitTrainedNLM_Model();
-    load_trained_weights(non_linear_model, "../Bayesian/VAE/Models/vae_weights.bin");
     load_trained_weights(non_linear_model, weights_file_path);
     initiated = true;
 }
@@ -46,10 +45,11 @@ void encode_data(double *data, double *encoded_data, double *logvar_data)
     Matrix *logvar = 		allocateMatrix(1,LATENT_DIM);
 
     fillMatrix(mat_img, data);
+
     encode(*non_linear_model, mat_img, z, logvar);
 
-    dump_matrix(z, encoded_data);
-    dump_matrix(logvar, logvar_data);
+    dump_matrix(*z, encoded_data);
+    dump_matrix(*logvar, logvar_data);
 
     freeMatrix(mat_img);
     freeMatrix(z);
@@ -69,10 +69,9 @@ void decode_data(double *encoded_data, double *decoded_data)
     Matrix *x_hat = 		allocateMatrix(1,INPUT_DIM);
 
     fillMatrix(z, encoded_data);
-    load_trained_weights(non_linear_model, "../Bayesian/VAE/Models/vae_weights.bin");
     decode(*non_linear_model, z, x_hat);
 
-    dump_matrix(x_hat, decoded_data);
+    dump_matrix(*x_hat, decoded_data);
 
     freeMatrix(z);
     freeMatrix(x_hat);
