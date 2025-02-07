@@ -1,5 +1,25 @@
 #include "matrix_tests.h"
 
+#define SIZE 250000
+
+double A_data[SIZE];
+double B_data[SIZE];
+double A_DOT_B_data[SIZE];
+
+void setup_import_test_data() {
+
+  FILE *file;
+  int norm[SIZE];
+
+  file = fopen("norm.bin", "rb");
+  fread(norm, sizeof(double), 250000, file);
+  fclose(file);
+
+  for (int i = 0; i < SIZE; i++) {
+    printf("%d\n", norm[i]);
+  }
+}
+
 void test_createMatrix(void) {
   Matrix *m;
   m = allocateMatrix(2, 2);
