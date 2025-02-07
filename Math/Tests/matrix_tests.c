@@ -2,6 +2,7 @@
 
 #define SIZE 250000
 
+
 double A_data[SIZE];
 double B_data[SIZE];
 double A_DOT_B_data[SIZE];
