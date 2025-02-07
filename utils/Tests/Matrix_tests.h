@@ -1,4 +1,5 @@
 #include "Matrix.h"
+#include <math.h>
 #include "CUnit/CUnit.h"
 #include "CUnit/Basic.h"
 #include <stdlib.h>

@@ -6,3 +6,5 @@
 #include <stdio.h>
 
 void test_init_linear(void);
+void test_linear(void);
+void test_backward(void);

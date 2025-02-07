@@ -1,8 +1,4 @@
-#include "Matrix.h"
 #include "LinearModel.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
 
 #define TEST
 
@@ -10,7 +6,7 @@ LM *InitLinear(int a, int b)
 {
 	LM *model_ptr;
 	model_ptr = (LM*) malloc(sizeof(LM));
-	model_ptr->A = allocateMatrix(a, b);
+	model_ptr->A = allocateMatrix(b, a);
 	model_ptr->b = allocateMatrix(b,1);
 #ifdef TEST
 	ones(model_ptr->A);
@@ -26,22 +22,39 @@ LM *InitLinear(int a, int b)
 	return model_ptr; 
 }
 
-void Linear(LM *m, Matrix *input)
+void Linear(LM *m, Matrix input)
 {	
 	//printf("Attempting Linear transformation.\n");
+	
+        assert(m->A->columns == input.columns);
 	if(m->output_init)
 	{
-		free(m->output);
+		freeMatrix(m->output);
 	}
-	m->output = allocateMatrix(input->rows, m->A->columns);
+	m->output = allocateMatrix(input.rows, m->A->rows);
 	m->output_init = true;	
 	Matrix *res_temp = allocateMatrix(m->output->rows, m->output->columns);
+	Matrix *A_t = allocateMatrix(m->A->rows, m->A->columns);
+	Matrix *b_t = allocateMatrix(m->b->rows, m->b->columns);
+	copyMatrix(*m->A, A_t);
+	copyMatrix(*m->b, b_t);
 
-	matMult(*input,*m->A,res_temp);
-	transpose(&m->b);
-	matrixAdd(*res_temp, *m->b, m->output);
-	transpose(&m->b);
+	transpose(&A_t);
+	transpose(&b_t);
+	dot(input,*A_t, (union Result*)res_temp);
+	matrixAdd(*res_temp, *b_t, m->output);
 	freeMatrix(res_temp);
+	freeMatrix(A_t);
+	freeMatrix(b_t);
+}
+
+void derivate_linear(LM *m, Matrix *error)
+{
+	// x = points[i, 0]
+	// y = points[i, 1]
+	// b_gradient += -(2/N)*(y - ((m_current*x)+b_current))
+	// m_gradient += -(2/M)* x * (y - ((m_current * x) + b_current))
+	// update grad*learningrate
 }
 
 /* Prints linear model */

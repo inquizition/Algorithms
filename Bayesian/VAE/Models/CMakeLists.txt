@@ -1,5 +1,5 @@
 set(CMAKE_C_FLAGS "-Og -g3")
-add_library(ModelFunctions LinearModel.c NonLinearModel.c)
+add_library(ModelFunctions SHARED model_api.c LinearModel.c model.c NonLinearModel.c )
 
 if(POLICY CMP0079)
 	cmake_policy(SET CMP0079 NEW)
