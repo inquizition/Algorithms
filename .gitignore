@@ -9,5 +9,6 @@ Makefile
 *.out
 *.dat
 *.gplot
+*.bin
 tags
 *build/

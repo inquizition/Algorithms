@@ -4,7 +4,8 @@ project(Algorithms VERSION 1.0 LANGUAGES C)
 
 # specify the C standard
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_C_FLAGS "-Og -g3")
+#set(CMAKE_C_FLAGS "-Og -g3")
+set(CMAKE_C_FLAGS "-O0")
 
 # add subdirectories
 add_subdirectory(Bayesian/VAE/Models)

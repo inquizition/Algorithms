@@ -1,4 +1,5 @@
-set(CMAKE_C_FLAGS "-Og -g3")
+#set(CMAKE_C_FLAGS "-Og -g3")
+set(CMAKE_C_FLAGS "-O0")
 add_library(LinearModel_test_lib LinearModel_tests.c)
 add_library(NonLinearModel_test_lib NonLinearModel_tests.c)
 add_library(TrainedModel_test_lib TrainedModel_tests.c)

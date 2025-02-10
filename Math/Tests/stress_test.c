@@ -85,7 +85,7 @@ int teardown_test_data() {
 
 void stress_test_dot(void) {
   int i;
-  for (i = 0; i < 50000000; i++) {
+  for (i = 0; i < 500000000000; i++) {
     Matrix *res = allocateMatrix(5000, 5000);
 
     dot(*A_5000_5000, *B_5000_5000, (union Result *)res);
