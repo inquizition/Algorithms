@@ -29,5 +29,3 @@ void test_hadamardProd_2x2(void);
 void test_hadamardProd_1x2(void);
 void tests_compareMatrix(void);
 void test_relu_matrix(void);
-
-void stress_test_dot(void);

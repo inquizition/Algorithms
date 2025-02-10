@@ -405,7 +405,7 @@ void dot(Matrix m1, Matrix m2, union Result *res) {
   assert(res->m.rows == rows);
   assert(res->m.columns == cols);
 
-//#pragma omp parallel for private(c, i)
+#pragma omp parallel for private(c, i)
   for (r = 0; r < res->m.rows; r++) {
     for (c = 0; c < res->m.columns; c++) {
       for (i = 0; i < middle; i++) {

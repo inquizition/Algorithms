@@ -1,6 +1,6 @@
 #set(CMAKE_C_FLAGS "-Og -g3")
 set(CMAKE_C_FLAGS "-O0")
-add_library(Math_test_lib matrix_tests.c)
+add_library(Math_test_lib matrix_tests.c stress_test.c)
 
 target_link_libraries(Math_test_lib PRIVATE m PUBLIC MathFunctions PRIVATE cunit)
 

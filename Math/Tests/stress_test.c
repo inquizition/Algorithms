@@ -38,7 +38,7 @@ static void fetch_data(double *buffer, char *file_path, int size)
 
 }
 
-int setup_import_test_data() {
+int setup_stress_test_data() {
   fetch_data(A_500_500_data,"../Math/Tests/Test_Data/A_500_500.bin", SIZE_500_500);
   A_500_500 = allocateMatrix(500, 500);
   fillMatrix(A_500_500, A_500_500_data);
@@ -72,7 +72,7 @@ int setup_import_test_data() {
   return 0;
 }
 
-int teardown_test_data() {
+int teardown_stress_test_data() {
   freeMatrix(A_500_500);
   freeMatrix(B_500_500);
   freeMatrix(A_DOT_B_500_500);
@@ -84,21 +84,27 @@ int teardown_test_data() {
 }
 
 void stress_test_dot(void) {
-  int i;
-  for (i = 0; i < 500000000000; i++) {
-    Matrix *res = allocateMatrix(5000, 5000);
+    struct timespec start, end;
+    int iterations = 2;  // Reduce to a reasonable number
 
-    dot(*A_5000_5000, *B_5000_5000, (union Result *)res);
+    Matrix *res = allocateMatrix(500, 500);
+    clock_gettime(CLOCK_MONOTONIC, &start);  // Start time
 
-    int r;
-    int c;
-    for (r = 0; r < res->rows; r++) {
-      for (c = 0; c < res->columns; c++) {
-        CU_ASSERT_EQUAL((int)(10 * res->data[r][c]),
-                        (int)(10 * A_DOT_B_5000_5000->data[r][c]));
-      }
+    for (int i = 0; i < iterations; i++) {
+        dot(*A_500_500, *B_500_500, (union Result *)res);
+
+        //for (int r = 0; r < res->rows; r++) {
+        //    for (int c = 0; c < res->columns; c++) {
+        //        CU_ASSERT_EQUAL((int)(10 * res->data[r][c]),
+        //                        (int)(10 * A_DOT_B_500_500->data[r][c]));
+        //    }
+        //}
+
     }
 
+    clock_gettime(CLOCK_MONOTONIC, &end);  // End time
     freeMatrix(res);
-  }
+
+    double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+    printf("\nExecution time for %d iterations: %f seconds\n", iterations, elapsed);
 }

@@ -1,4 +1,5 @@
 #include "matrix_tests.h"
+#include "stress_test.h"
 
 static CU_TestInfo test_cases[] = {
     {"test_createMatrix", test_createMatrix},
@@ -34,7 +35,7 @@ static CU_TestInfo stress_test_cases[] = {
 
 static CU_SuiteInfo suites[] = {
     {"Math tests", setup_import_test_data, teardown_test_data, NULL, NULL, test_cases},
-    {"Math stress tests", NULL, NULL, NULL, NULL, stress_test_cases},
+    {"Math stress tests", setup_stress_test_data, teardown_stress_test_data, NULL, NULL, stress_test_cases},
     CU_SUITE_INFO_NULL,
 };
 
