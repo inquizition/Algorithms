@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int setup_import_test_data(void);
+int teardown_test_data(void);
+
 void test_createMatrix(void);
 void test_matrixAdd(void);
 void test_matrixAdd_EqualRow(void);

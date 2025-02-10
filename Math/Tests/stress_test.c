@@ -1,44 +1,104 @@
 #include "stress_test.h"
 
+#define SIZE_500_500 250000
+#define SIZE_5000_5000 25000000
+#define SIZE_2_4 8
+
+double A_500_500_data[SIZE_500_500];
+Matrix *A_500_500;
+double B_500_500_data[SIZE_500_500];
+Matrix *B_500_500;
+double A_DOT_B_500_500_data[SIZE_500_500];
+Matrix *A_DOT_B_500_500;
+
+double A_5000_5000_data[SIZE_5000_5000];
+Matrix *A_5000_5000;
+double B_5000_5000_data[SIZE_5000_5000];
+Matrix *B_5000_5000;
+double A_DOT_B_5000_5000_data[SIZE_5000_5000];
+Matrix *A_DOT_B_5000_5000;
+
+static void fetch_data(double *buffer, char *file_path, int size)
+{
+    FILE *file;
+
+    file = fopen(file_path, "rb");
+
+    if (!file) {
+        printf("Error: Could not open file!\n");
+        return;
+    }
+
+    size_t elements_read = fread(buffer, sizeof(double), size, file);
+    if (elements_read != size) {
+        printf("Error: Expected to read %d elements but got %zu\n", size, elements_read);
+    }
+
+    fclose(file);
+
+}
+
+int setup_import_test_data() {
+  fetch_data(A_500_500_data,"../Math/Tests/Test_Data/A_500_500.bin", SIZE_500_500);
+  A_500_500 = allocateMatrix(500, 500);
+  fillMatrix(A_500_500, A_500_500_data);
+  printf("Fetched A_500_500\n");
+ 
+  fetch_data(B_500_500_data,"../Math/Tests/Test_Data/B_500_500.bin", SIZE_500_500);
+  B_500_500 = allocateMatrix(500, 500);
+  fillMatrix(B_500_500, B_500_500_data);
+  printf("Fetched B_500_500\n");
+  
+  fetch_data(A_DOT_B_500_500_data,"../Math/Tests/Test_Data/A_DOT_B_500_500.bin", SIZE_500_500);
+  A_DOT_B_500_500 = allocateMatrix(500, 500);
+  fillMatrix(A_DOT_B_500_500, A_DOT_B_500_500_data);
+  printf("Fetched A_DOT_B_500_500\n");
+
+  fetch_data(A_5000_5000_data,"../Math/Tests/Test_Data/A_5000_5000.bin", SIZE_5000_5000);
+  A_5000_5000 = allocateMatrix(5000, 5000);
+  fillMatrix(A_5000_5000, A_5000_5000_data);
+  printf("Fetched A_5000_5000\n");
+ 
+  fetch_data(B_5000_5000_data,"../Math/Tests/Test_Data/B_5000_5000.bin", SIZE_5000_5000);
+  B_5000_5000 = allocateMatrix(5000, 5000);
+  fillMatrix(B_5000_5000, B_5000_5000_data);
+  printf("Fetched B_5000_5000\n");
+  
+  fetch_data(A_DOT_B_5000_5000_data,"../Math/Tests/Test_Data/A_DOT_B_5000_5000.bin", SIZE_5000_5000);
+  A_DOT_B_5000_5000 = allocateMatrix(5000, 5000);
+  fillMatrix(A_DOT_B_5000_5000, A_DOT_B_5000_5000_data);
+  printf("Fetched A_DOT_B_5000_5000\n");
+
+  return 0;
+}
+
+int teardown_test_data() {
+  freeMatrix(A_500_500);
+  freeMatrix(B_500_500);
+  freeMatrix(A_DOT_B_500_500);
+
+  freeMatrix(A_5000_5000);
+  freeMatrix(B_5000_5000);
+  freeMatrix(A_DOT_B_5000_5000);
+  return 0;
+}
+
 void stress_test_dot(void) {
-
-  double data[2][2] = {
-      {3.5, 2.3},
-      {8.9, 9.5},
-  };
-
-  double data2[2][2] = {
-      {5.3, 6.2},
-      {8.6, 8.7},
-  };
-
-  double expected[2][2] = {
-      {38.33, 41.71},
-      {128.87, 137.83},
-  };
-
   int i;
-  for (i = 0; i < 50000; i++) {
-    Matrix *m1 = allocateMatrix(2, 2);
-    Matrix *m2 = allocateMatrix(2, 2);
-    Matrix *res = allocateMatrix(2, 2);
+  for (i = 0; i < 50000000; i++) {
+    Matrix *res = allocateMatrix(5000, 5000);
 
-    fillMatrix(m1, *data);
-    fillMatrix(m2, *data2);
-
-    dot(*m1, *m2, (union Result *)res);
+    dot(*A_5000_5000, *B_5000_5000, (union Result *)res);
 
     int r;
     int c;
     for (r = 0; r < res->rows; r++) {
       for (c = 0; c < res->columns; c++) {
         CU_ASSERT_EQUAL((int)(10 * res->data[r][c]),
-                        (int)(10 * expected[r][c]));
+                        (int)(10 * A_DOT_B_5000_5000->data[r][c]));
       }
     }
 
-    freeMatrix(m1);
-    freeMatrix(m2);
     freeMatrix(res);
   }
 }

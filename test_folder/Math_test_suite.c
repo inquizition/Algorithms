@@ -33,7 +33,7 @@ static CU_TestInfo stress_test_cases[] = {
 };
 
 static CU_SuiteInfo suites[] = {
-    {"Math tests", NULL, NULL, NULL, NULL, test_cases},
+    {"Math tests", setup_import_test_data, teardown_test_data, NULL, NULL, test_cases},
     {"Math stress tests", NULL, NULL, NULL, NULL, stress_test_cases},
     CU_SUITE_INFO_NULL,
 };

@@ -1,24 +1,76 @@
 #include "matrix_tests.h"
 
-#define SIZE 250000
+#define SIZE_2_1 2
+#define SIZE_2_2 4
+#define SIZE_2_4 8
 
+double A_2_2_data[SIZE_2_2];
+Matrix *A_2_2;
+double A_2_1_data[SIZE_2_1];
+Matrix *A_2_1;
+double A_2_4_data[SIZE_2_4];
+Matrix *A_2_4;
+double B_2_2_data[SIZE_2_2];
+Matrix *B_2_2;
+double A_DOT_B_2_2_data[SIZE_2_2];
+Matrix *A_DOT_B_2_2;
+double A_ADD_B_2_2_data[SIZE_2_2];
+Matrix *A_ADD_B_2_2;
 
-double A_data[SIZE];
-double B_data[SIZE];
-double A_DOT_B_data[SIZE];
+static void fetch_data(double *buffer, char *file_path, int size)
+{
+    FILE *file;
 
-void setup_import_test_data() {
+    file = fopen(file_path, "rb");
 
-  FILE *file;
-  int norm[SIZE];
+    if (!file) {
+        printf("Error: Could not open file!\n");
+        return;
+    }
 
-  file = fopen("norm.bin", "rb");
-  fread(norm, sizeof(double), 250000, file);
-  fclose(file);
+    size_t elements_read = fread(buffer, sizeof(double), size, file);
+    if (elements_read != size) {
+        printf("Error: Expected to read %d elements but got %zu\n", size, elements_read);
+    }
 
-  for (int i = 0; i < SIZE; i++) {
-    printf("%d\n", norm[i]);
-  }
+    fclose(file);
+
+}
+
+int setup_import_test_data() {
+  fetch_data(A_2_2_data,"../Math/Tests/Test_Data/A_2_2.bin", SIZE_2_2);
+  A_2_2 = allocateMatrix(2, 2);
+  fillMatrix(A_2_2, A_2_2_data);
+  printf("Fetched A_2_2\n");
+
+  fetch_data(A_2_2_data,"../Math/Tests/Test_Data/A_2_2.bin", SIZE_2_2);
+  A_2_4 = allocateMatrix(2, 2);
+  fillMatrix(A_2_2, A_2_2_data);
+  printf("Fetched A_2_2\n");
+  
+  fetch_data(B_2_2_data,"../Math/Tests/Test_Data/B_2_2.bin", SIZE_2_2);
+  B_2_2 = allocateMatrix(2, 2);
+  fillMatrix(B_2_2, B_2_2_data);
+  printf("Fetched B_2_2\n");
+  
+  fetch_data(A_DOT_B_2_2_data,"../Math/Tests/Test_Data/A_DOT_B_2_2.bin", SIZE_2_2);
+  A_DOT_B_2_2 = allocateMatrix(2, 2);
+  fillMatrix(A_DOT_B_2_2, A_DOT_B_2_2_data);
+  printf("Fetched A_DOT_B_2_2\n");
+
+  fetch_data(A_ADD_B_2_2_data,"../Math/Tests/Test_Data/A_ADD_B_2_2.bin", SIZE_2_2);
+  A_ADD_B_2_2 = allocateMatrix(2, 2);
+  fillMatrix(A_ADD_B_2_2, A_ADD_B_2_2_data);
+  printf("Fetched A_ADD_B_2_2\n");
+  return 0;
+}
+
+int teardown_test_data() {
+  freeMatrix(A_2_2);
+  freeMatrix(B_2_2);
+  freeMatrix(A_DOT_B_2_2);
+  freeMatrix(A_ADD_B_2_2);
+  return 0;
 }
 
 void test_createMatrix(void) {
@@ -39,26 +91,18 @@ void test_createMatrix(void) {
 }
 
 void test_matrixAdd(void) {
-  Matrix *m = allocateMatrix(2, 2);
-  Matrix *a = allocateMatrix(2, 2);
   Matrix *res = allocateMatrix(2, 2);
 
-  double data[2][2] = {{1, 2}, {3, 4}};
-  fillMatrix(a, *data);
+  matrixAdd(*A_2_2, *B_2_2, res);
 
-  matrixAdd(*m, *a, res);
-
-  double expected[][4] = {{1, 2}, {3, 4}};
   int r;
   int c;
-  for (r = 0; r < m->rows; r++) {
-    for (c = 0; c < m->columns; c++) {
-      CU_ASSERT_EQUAL(res->data[r][c], expected[r][c]);
+  for (r = 0; r < A_ADD_B_2_2->rows; r++) {
+    for (c = 0; c < A_ADD_B_2_2->columns; c++) {
+      CU_ASSERT_EQUAL(res->data[r][c], A_ADD_B_2_2->data[r][c]);
     }
   }
 
-  freeMatrix(m);
-  freeMatrix(a);
   freeMatrix(res);
 }
 
@@ -310,40 +354,21 @@ void test_swapMatrix(void) {
 }
 
 void test_matrixDot_2x2(void) {
-  Matrix *m1 = allocateMatrix(2, 2);
-  Matrix *m2 = allocateMatrix(2, 2);
   Matrix *res = allocateMatrix(2, 2);
 
-  double data[2][2] = {
-      {3.5, 2.3},
-      {8.9, 9.5},
-  };
+  dot(*A_2_2, *B_2_2, (union Result *)res);
 
-  double data2[2][2] = {
-      {5.3, 6.2},
-      {8.6, 8.7},
-  };
-
-  fillMatrix(m1, *data);
-  fillMatrix(m2, *data2);
-
-  dot(*m1, *m2, (union Result *)res);
-
-  double expected[2][2] = {
-      {38.33, 41.71},
-      {128.87, 137.83},
-  };
   int r;
   int c;
   for (r = 0; r < res->rows; r++) {
     for (c = 0; c < res->columns; c++) {
-      CU_ASSERT_EQUAL((int)(10 * res->data[r][c]), (int)(10 * expected[r][c]));
+      CU_ASSERT_EQUAL((int)(10 * res->data[r][c]), (int)(10 * A_DOT_B_2_2->data[r][c]));
+      if((int)(10 * res->data[r][c]) != (int)(10 * A_DOT_B_2_2->data[r][c]))
+      {
+        printf(" %d not equal to %d", (int)(10 * res->data[r][c]), (int)(10 * A_DOT_B_2_2->data[r][c]));
+      }
     }
   }
-
-  freeMatrix(m1);
-  freeMatrix(m2);
-  freeMatrix(res);
 }
 
 void test_matrixDot_2x4(void) {
