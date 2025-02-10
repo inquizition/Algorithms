@@ -69,6 +69,12 @@ int setup_stress_test_data() {
   fillMatrix(A_DOT_B_5000_5000, A_DOT_B_5000_5000_data);
   printf("Fetched A_DOT_B_5000_5000\n");
 
+  #ifdef _OPENMP
+  printf("OpenMP is enabled\n");
+  #else
+  printf("OpenMP is NOT enabled\n");
+  #endif
+
   return 0;
 }
 
@@ -92,14 +98,6 @@ void stress_test_dot(void) {
 
     for (int i = 0; i < iterations; i++) {
         dot(*A_500_500, *B_500_500, (union Result *)res);
-
-        //for (int r = 0; r < res->rows; r++) {
-        //    for (int c = 0; c < res->columns; c++) {
-        //        CU_ASSERT_EQUAL((int)(10 * res->data[r][c]),
-        //                        (int)(10 * A_DOT_B_500_500->data[r][c]));
-        //    }
-        //}
-
     }
 
     clock_gettime(CLOCK_MONOTONIC, &end);  // End time
