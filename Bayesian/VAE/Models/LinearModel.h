@@ -1,7 +1,7 @@
 #ifndef M_LINEARMODEL_H
 #define M_LINEARMODEL_H
 
-#include "Matrix.h"
+#include "matrix.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>

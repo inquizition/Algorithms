@@ -1,4 +1,4 @@
-#include "Matrix.h"
+#include "matrix.h"
 #include "LinearModel.h"
 //#include "NonLinearModel.h"
 #include "model.h"

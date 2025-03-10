@@ -1,4 +1,4 @@
-#include "Matrix.h"
+#include "matrix.h"
 #include "model.h"
 #include "LinearModel.h"
 #include <stdlib.h>

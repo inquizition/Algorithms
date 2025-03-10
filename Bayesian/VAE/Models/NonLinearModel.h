@@ -1,7 +1,7 @@
 #ifndef M_NONLINEARMODEL_H
 #define M_NONLINEARMODEL_H
 
-#include "Matrix.h"
+#include "matrix.h"
 #include "LinearModel.h"
 #include <stdlib.h>
 #include <stdio.h>

@@ -1,4 +1,4 @@
-#include "Matrix_tests.h"
+#include "matrix_tests.h"
 
 static CU_TestInfo test_cases[] = {
     { "test_createMatrix", test_createMatrix },
