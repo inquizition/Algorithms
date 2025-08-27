@@ -10,7 +10,7 @@
 
 typedef struct Matrix {
   int rows, columns;
-  double **data;
+  double *data;
   struct Matrix *next;
 } Matrix;
 
@@ -20,7 +20,7 @@ union Result {
 };
 
 struct Node {
-  struct Matrixt *ptr;
+  Matrix *ptr;
   struct Node *next;
 };
 

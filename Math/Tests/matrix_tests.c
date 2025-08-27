@@ -1,5 +1,8 @@
 #include "matrix_tests.h"
 
+#define MAT_AT(m, r, c) ((m)->data[(r) * (m)->columns + (c)])
+#define MAT_AT_VAL(m, r, c) ((m).data[(r) * (m).columns + (c)])
+
 #define SIZE_2_1 2
 #define SIZE_2_2 4
 #define SIZE_2_4 8
@@ -82,10 +85,10 @@ void test_createMatrix(void) {
   CU_ASSERT_EQUAL(m->columns, 2);
   CU_ASSERT_EQUAL(m->rows, 2);
 
-  CU_ASSERT_EQUAL(m->data[0][0], 0);
-  CU_ASSERT_EQUAL(m->data[1][0], 0);
-  CU_ASSERT_EQUAL(m->data[0][1], 0);
-  CU_ASSERT_EQUAL(m->data[1][1], 0);
+  CU_ASSERT_EQUAL(MAT_AT(m, 0, 0), 0);
+  CU_ASSERT_EQUAL(MAT_AT(m, 1, 0), 0);
+  CU_ASSERT_EQUAL(MAT_AT(m, 0, 1), 0);
+  CU_ASSERT_EQUAL(MAT_AT(m, 1, 1), 0);
 
   freeMatrix(m);
 }
@@ -99,7 +102,7 @@ void test_matrixAdd(void) {
   int c;
   for (r = 0; r < A_ADD_B_2_2->rows; r++) {
     for (c = 0; c < A_ADD_B_2_2->columns; c++) {
-      CU_ASSERT_EQUAL(res->data[r][c], A_ADD_B_2_2->data[r][c]);
+      CU_ASSERT_EQUAL(MAT_AT(res, r, c), MAT_AT(A_ADD_B_2_2, r, c));
     }
   }
 
@@ -120,7 +123,7 @@ void test_matrixAdd_EqualRow(void) {
   int c;
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      CU_ASSERT_EQUAL(res->data[r][c], expected[r][c]);
+      CU_ASSERT_EQUAL(MAT_AT(res, r, c), expected[r][c]);
     }
   }
 
@@ -143,7 +146,7 @@ void test_matrixAdd_EqualColumn(void) {
   int c;
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      CU_ASSERT_EQUAL(res->data[r][c], expected[r][c]);
+      CU_ASSERT_EQUAL(MAT_AT(res, r, c), expected[r][c]);
     }
   }
 
@@ -166,7 +169,7 @@ void test_matrixAdd_addConst(void) {
   int c;
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      CU_ASSERT_EQUAL(res->data[r][c], expected[r][c]);
+      CU_ASSERT_EQUAL(MAT_AT(res, r, c), expected[r][c]);
     }
   }
 
@@ -189,7 +192,7 @@ void test_matrixSubtract(void) {
   int c;
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      CU_ASSERT_EQUAL(res->data[r][c], expected[r][c]);
+      CU_ASSERT_EQUAL(MAT_AT(res, r, c), expected[r][c]);
     }
   }
 
@@ -212,7 +215,7 @@ void test_matrixSubtract_EqualRow(void) {
   int c;
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      CU_ASSERT_EQUAL(res->data[r][c], expected[r][c]);
+      CU_ASSERT_EQUAL(MAT_AT(res, r, c), expected[r][c]);
     }
   }
 
@@ -235,7 +238,7 @@ void test_matrixSubtract_EqualColumn(void) {
   int c;
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      CU_ASSERT_EQUAL(res->data[r][c], expected[r][c]);
+      CU_ASSERT_EQUAL(MAT_AT(res, r, c), expected[r][c]);
     }
   }
 
@@ -258,7 +261,7 @@ void test_matrixSubtract_addConst(void) {
   int c;
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      CU_ASSERT_EQUAL(res->data[r][c], expected[r][c]);
+      CU_ASSERT_EQUAL(MAT_AT(res, r, c), expected[r][c]);
     }
   }
 
@@ -280,7 +283,7 @@ void tests_transposeMatrix_2x4(void) {
   int c;
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      CU_ASSERT_EQUAL(m->data[r][c], expected[r][c]);
+      CU_ASSERT_EQUAL(MAT_AT(m, r, c), expected[r][c]);
     }
   }
 
@@ -300,7 +303,7 @@ void tests_transposeMatrix_2x2(void) {
   int c;
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      CU_ASSERT_EQUAL(m->data[r][c], expected[r][c]);
+      CU_ASSERT_EQUAL(MAT_AT(m, r, c), expected[r][c]);
     }
   }
 
@@ -321,7 +324,7 @@ void test_eyeMatrix(void) {
   int c;
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      CU_ASSERT_EQUAL(m->data[r][c], expected[r][c]);
+      CU_ASSERT_EQUAL(MAT_AT(m, r, c), expected[r][c]);
     }
   }
 
@@ -337,7 +340,7 @@ void test_swapMatrix(void) {
   int c;
   for (r = 0; r < m1->rows; r++) {
     for (c = 0; c < m1->columns; c++) {
-      CU_ASSERT_NOT_EQUAL(m1->data[r][c], m2->data[r][c]);
+      CU_ASSERT_NOT_EQUAL(MAT_AT(m1, r, c), MAT_AT(m2, r, c));
     }
   }
 
@@ -345,7 +348,7 @@ void test_swapMatrix(void) {
 
   for (r = 0; r < m1->rows; r++) {
     for (c = 0; c < m1->columns; c++) {
-      CU_ASSERT_EQUAL(m1->data[r][c], m2->data[r][c]);
+      CU_ASSERT_EQUAL(MAT_AT(m1, r, c), MAT_AT(m2, r, c));
     }
   }
 
@@ -362,10 +365,10 @@ void test_matrixDot_2x2(void) {
   int c;
   for (r = 0; r < res->rows; r++) {
     for (c = 0; c < res->columns; c++) {
-      CU_ASSERT_EQUAL((int)(10 * res->data[r][c]), (int)(10 * A_DOT_B_2_2->data[r][c]));
-      if((int)(10 * res->data[r][c]) != (int)(10 * A_DOT_B_2_2->data[r][c]))
+      CU_ASSERT_EQUAL((int)(10 * MAT_AT(res, r, c)), (int)(10 * MAT_AT(A_DOT_B_2_2, r, c)));
+      if((int)(10 * MAT_AT(res, r, c)) != (int)(10 * MAT_AT(A_DOT_B_2_2, r, c)))
       {
-        printf(" %d not equal to %d", (int)(10 * res->data[r][c]), (int)(10 * A_DOT_B_2_2->data[r][c]));
+        printf(" %d not equal to %d", (int)(10 * MAT_AT(res, r, c)), (int)(10 * MAT_AT(A_DOT_B_2_2, r, c)));
       }
     }
   }
@@ -399,7 +402,7 @@ void test_matrixDot_2x4(void) {
   int c;
   for (r = 0; r < res->rows; r++) {
     for (c = 0; c < res->columns; c++) {
-      CU_ASSERT_EQUAL((int)(10 * res->data[r][c]), (int)(10 * expected[r][c]));
+      CU_ASSERT_EQUAL((int)(10 * MAT_AT(res, r, c)), (int)(10 * expected[r][c]));
     }
   }
 
@@ -422,7 +425,7 @@ void test_matrixDot_1x1(void) {
   dot(*m1, *m2, (union Result *)res);
   double expected = 147.85;
 
-  CU_ASSERT_EQUAL((int)(10 * res->data[0][0]), (int)(10 * expected));
+  CU_ASSERT_EQUAL((int)(10 * MAT_AT(res, 0, 0)), (int)(10 * expected));
 
   freeMatrix(m1);
   freeMatrix(m2);
@@ -452,12 +455,29 @@ void test_matrixDot_4x4(void) {
   int c;
   for (r = 0; r < res->rows; r++) {
     for (c = 0; c < res->columns; c++) {
-      CU_ASSERT_EQUAL((int)(10 * res->data[r][c]), (int)(10 * expected[r][c]));
+      CU_ASSERT_EQUAL((int)(10 * MAT_AT(res, r, c)), (int)(10 * expected[r][c]));
     }
   }
 
   freeMatrix(m1);
   freeMatrix(m2);
+  freeMatrix(res);
+}
+
+void test_matMult_2x2(void) {
+  Matrix *res = allocateMatrix(2, 2);
+
+  matMult(*A_2_2, *B_2_2, res);
+
+  int r;
+  int c;
+  for (r = 0; r < res->rows; r++) {
+    for (c = 0; c < res->columns; c++) {
+      CU_ASSERT_EQUAL((int)(10 * res->data[r][c]),
+                      (int)(10 * A_DOT_B_2_2->data[r][c]));
+    }
+  }
+
   freeMatrix(res);
 }
 
@@ -492,7 +512,7 @@ void test_hadamardProd_2x2(void) {
   int c;
   for (r = 0; r < res->rows; r++) {
     for (c = 0; c < res->columns; c++) {
-      CU_ASSERT_EQUAL((int)(10 * res->data[r][c]), (int)(10 * expected[r][c]));
+      CU_ASSERT_EQUAL((int)(10 * MAT_AT(res, r, c)), (int)(10 * expected[r][c]));
     }
   }
 
@@ -523,7 +543,7 @@ void test_hadamardProd_1x2(void) {
   int c;
   for (r = 0; r < res->rows; r++) {
     for (c = 0; c < res->columns; c++) {
-      CU_ASSERT_EQUAL((int)(10 * res->data[r][c]), (int)(10 * expected[r][c]));
+      CU_ASSERT_EQUAL((int)(10 * MAT_AT(res, r, c)), (int)(10 * expected[r][c]));
     }
   }
 
@@ -555,10 +575,10 @@ void tests_compareMatrix(void) {
   double temp;
   for (r = 0; r < m1->rows; r++) {
     for (c = 0; c < m1->columns; c++) {
-      temp = m1->data[r][c];
-      m1->data[r][c] = 1.1;
+      temp = MAT_AT(m1, r, c);
+      MAT_AT(m1, r, c) = 1.1;
       CU_ASSERT_FALSE(cmpMatrix(*m1, *m2));
-      m1->data[r][c] = temp;
+      MAT_AT(m1, r, c) = temp;
     }
   }
 
@@ -608,5 +628,21 @@ void test_relu_matrix(void) {
   freeMatrix(m2);
   freeMatrix(e_m1);
   freeMatrix(e_m2);
+}
+
+void test_matrix_sum(void) {
+  Matrix *m = allocateMatrix(2, 2);
+
+  double data[2][2] = {
+      {1.0, 2.0},
+      {3.0, 4.0},
+  };
+  fillMatrix(m, *data);
+
+  double sum = matrix_sum(m);
+
+  CU_ASSERT_EQUAL((int)(10 * sum), (int)(10 * 10.0));
+
+  freeMatrix(m);
 }
 
