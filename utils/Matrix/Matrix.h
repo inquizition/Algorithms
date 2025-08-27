@@ -21,7 +21,7 @@ union Result {
 };
 
 struct Node {
-    struct Matrixt *ptr;
+    Matrix *ptr;
     struct Node *next;
 };
 
