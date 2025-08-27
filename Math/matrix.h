@@ -19,6 +19,11 @@ union Result {
   double res;
 };
 
+struct Node {
+  Matrix *ptr;
+  struct Node *next;
+};
+
 static Matrix *allocated_matrices = NULL;
 
 void d_reLu_matrix(Matrix *m);

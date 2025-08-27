@@ -561,18 +561,23 @@ void matMult(Matrix m1, Matrix m2, Matrix *res)
     res->rows = m1.rows;
     res->columns = m2.columns;
 
-    assert(m1.columns == m2.columns);
-    assert(m1.rows == m2.rows);
+    assert(m1.columns == m2.rows);
 
     int r;
     int c;
-	
-    #pragma omp parallel for private(c)
-    for(r = 0; r < m1.rows; r++)
+    int k;
+
+    #pragma omp parallel for private(c, k)
+    for(r = 0; r < res->rows; r++)
     {
-        for(c = 0; c < m1.columns; c++)
+        for(c = 0; c < res->columns; c++)
         {
-            res->data[r][c] += m1.data[r][c] * m2.data[r][c];
+            double sum = 0.0;
+            for(k = 0; k < m1.columns; k++)
+            {
+                sum += m1.data[r][k] * m2.data[k][c];
+            }
+            res->data[r][c] = sum;
         }
     }
 }
@@ -593,14 +598,14 @@ void hadamard_prod(Matrix m1, Matrix m2, Matrix* res)
     {
         for(c = 0; c < m1.columns; c++)
         {
-            res->data[r][c] += m1.data[r][c] * m2.data[r][c];
+            res->data[r][c] = m1.data[r][c] * m2.data[r][c];
         }
     }
 }
 
 double matrix_sum(Matrix *m)
 {
-    double res;
+    double res = 0.0;
     int r;
     int c;
 

@@ -455,6 +455,40 @@ void test_matrixDot_4x4(void)
     freeMatrix(res);
 }
 
+void test_matMult_2x2(void)
+{
+    Matrix *m1 = allocateMatrix(2,2);
+    Matrix *m2 = allocateMatrix(2,2);
+    Matrix *res = allocateMatrix(2,2);
+
+    double data[2][2] = {   {3.5, 2.3},
+                            {8.9, 9.5},   };
+
+    double data2[2][2] = {  {5.3, 6.2},
+                            {8.6, 8.7},   };
+
+    fillMatrix(m1, *data);
+    fillMatrix(m2, *data2);
+
+    matMult(*m1, *m2, res);
+
+    double expected[2][2] = {   { 38.33, 41.71 },
+                                {128.87, 137.83},   };
+    int r;
+    int c;
+    for(r = 0; r < res->rows; r++)
+    {
+        for(c = 0; c < res->columns; c++)
+        {
+            CU_ASSERT_EQUAL((int)(10*res->data[r][c]), (int)(10*expected[r][c]));
+        }
+    }
+
+    freeMatrix(m1);
+    freeMatrix(m2);
+    freeMatrix(res);
+}
+
 void test_hadamardProd_2x2(void)
 {
     Matrix *m1 = allocateMatrix(2,2);
@@ -589,4 +623,18 @@ void test_relu_matrix(void)
     freeMatrix(m2);
     freeMatrix(e_m1);
     freeMatrix(e_m2);
+}
+
+void test_matrix_sum(void)
+{
+    Matrix *m = allocateMatrix(2,2);
+
+    double data[2][2] = { {1.0, 2.0}, {3.0, 4.0} };
+    fillMatrix(m, *data);
+
+    double sum = matrix_sum(m);
+
+    CU_ASSERT_EQUAL((int)(10 * sum), (int)(10 * 10.0));
+
+    freeMatrix(m);
 }
