@@ -1,19 +1,18 @@
 #include "matrix.h"
 
 static void swap(double *arg1, double *arg2);
-static double **allocate2Darray(int rows, int columns);
-static void free2Darray(double **arr, int rows, int columns);
 
 /* Function returns the max value of the Matrix */
 static double max_matrix(Matrix *m) {
-  double max = m->data[0][0];
+  double max = m->data[0];
   int r, c;
 
 #pragma omp parallel for private(c) reduction(max : max)
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      if (m->data[r][c] > max) {
-        max = m->data[r][c];
+      double val = m->data[r * m->columns + c];
+      if (val > max) {
+        max = val;
       }
     }
   }
@@ -28,7 +27,7 @@ double logsumexp(Matrix *m) {
 #pragma omp parallel for private(j) reduction(+ : res)
   for (i = 0; i < m->rows; i++) {
     for (j = 0; j < m->columns; j++) {
-      res += exp(m->data[i][j] - max);
+      res += exp(m->data[i * m->columns + j] - max);
     }
   }
 
@@ -41,7 +40,8 @@ void matrix_pow(Matrix *m, int power) {
 #pragma omp parallel for private(c)
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      m->data[r][c] = pow(m->data[r][c], power);
+      int idx = r * m->columns + c;
+      m->data[idx] = pow(m->data[idx], power);
     }
   }
 }
@@ -52,7 +52,8 @@ void exp_matrix(Matrix *m) {
 #pragma omp parallel for private(c)
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      m->data[r][c] = exp(m->data[r][c]);
+      int idx = r * m->columns + c;
+      m->data[idx] = exp(m->data[idx]);
     }
   }
 }
@@ -63,7 +64,7 @@ void const_mult_matrix(Matrix *m, double C) {
 #pragma omp parallel for private(c)
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      m->data[r][c] *= C;
+      m->data[r * m->columns + c] *= C;
     }
   }
 }
@@ -74,8 +75,9 @@ void reLu_matrix(Matrix *m) {
 #pragma omp parallel for private(c)
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      if (m->data[r][c] < 0) {
-        m->data[r][c] = 0;
+      int idx = r * m->columns + c;
+      if (m->data[idx] < 0) {
+        m->data[idx] = 0;
       }
     }
   }
@@ -87,7 +89,8 @@ void sigmoid_matrix(Matrix *m) {
 #pragma omp parallel for private(c)
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      m->data[r][c] = 1.0 / (1.0 + exp(-m->data[r][c]));
+      int idx = r * m->columns + c;
+      m->data[idx] = 1.0 / (1.0 + exp(-m->data[idx]));
     }
   }
 }
@@ -98,7 +101,8 @@ void d_reLu_matrix(Matrix *m) {
 #pragma omp parallel for private(c)
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      m->data[r][c] = (m->data[r][c] > 0) ? 1 : 0;
+      int idx = r * m->columns + c;
+      m->data[idx] = (m->data[idx] > 0) ? 1 : 0;
     }
   }
 }
@@ -114,7 +118,7 @@ void print_matrix(Matrix m, char *header) {
   printf("\n");
   for (r = 0; r < N; r++) {
     for (c = 0; c < M; c++) {
-      printf("%.4f   ", m.data[r][c]);
+      printf("%.4f   ", m.data[r * m.columns + c]);
     }
     printf("\n\n");
   }
@@ -122,23 +126,15 @@ void print_matrix(Matrix m, char *header) {
 }
 
 Matrix *allocateMatrix(int rows, int columns) {
-  Matrix *m_ptr;
-  m_ptr = (Matrix *)malloc(sizeof(Matrix));
+  Matrix *m_ptr = (Matrix *)malloc(sizeof(Matrix));
+  if (!m_ptr) {
+    return NULL;
+  }
 
   m_ptr->rows = rows;
   m_ptr->columns = columns;
-
-  m_ptr->data = allocate2Darray(rows, columns);
+  m_ptr->data = (double *)calloc((size_t)rows * columns, sizeof(double));
   m_ptr->next = NULL;
-
-  int r, c;
-
-#pragma omp parallel for private(c)
-  for (r = 0; r < m_ptr->rows; r++) {
-    for (c = 0; c < m_ptr->columns; c++) {
-      m_ptr->data[r][c] = 0.00;
-    }
-  }
 
   if (allocated_matrices == NULL) {
     allocated_matrices = m_ptr;
@@ -151,26 +147,6 @@ Matrix *allocateMatrix(int rows, int columns) {
   }
 
   return m_ptr;
-}
-
-static double **allocate2Darray(int rows, int columns) {
-  double **arr_ptr;
-  arr_ptr = (double **)malloc(rows * sizeof(*arr_ptr));
-
-  int r;
-  for (r = 0; r < rows; r++) {
-    arr_ptr[r] = (double *)malloc(columns * sizeof(double));
-  }
-
-  return arr_ptr;
-}
-
-static void free2Darray(double **arr, int rows, int columns) {
-  int i;
-  for (i = 0; i < rows; i++) {
-    free(arr[i]);
-  }
-  free(arr);
 }
 
 void freeMatrix(Matrix *m) {
@@ -189,7 +165,7 @@ void freeMatrix(Matrix *m) {
     }
   }
 
-  free2Darray(m->data, m->rows, m->columns);
+  free(m->data);
   free(m);
 }
 
@@ -236,13 +212,18 @@ void matrixAdd(Matrix matrix, Matrix a, Matrix *res) {
   for (r = 0; r < rows; r++) {
     for (c = 0; c < columns; c++) {
       if (single_element) {
-        res->data[r][c] = matrix.data[r][c] + a.data[0][0];
+        res->data[r * res->columns + c] =
+            matrix.data[r * matrix.columns + c] + a.data[0];
       } else if (equal_rows && equal_columns) {
-        res->data[r][c] = matrix.data[r][c] + a.data[r][c];
+        res->data[r * res->columns + c] =
+            matrix.data[r * matrix.columns + c] +
+            a.data[r * a.columns + c];
       } else if (equal_rows) {
-        res->data[r][c] = matrix.data[r][c] + a.data[r][0];
+        res->data[r * res->columns + c] =
+            matrix.data[r * matrix.columns + c] + a.data[r * a.columns + 0];
       } else if (equal_columns) {
-        res->data[r][c] = matrix.data[r][c] + a.data[0][c];
+        res->data[r * res->columns + c] =
+            matrix.data[r * matrix.columns + c] + a.data[0 * a.columns + c];
       }
     }
   }
@@ -254,7 +235,8 @@ void flatten(Matrix *m, Matrix *flattened) {
 #pragma omp parallel for private(c)
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      flattened->data[0][c + (r * m->columns)] = m->data[r][c];
+      flattened->data[c + (r * m->columns)] =
+          m->data[r * m->columns + c];
     }
   }
 }
@@ -264,7 +246,7 @@ void dump_matrix(Matrix m, double *data) {
 #pragma omp parallel for private(c)
   for (r = 0; r < m.rows; r++) {
     for (c = 0; c < m.columns; c++) {
-      data[c + (r * m.columns)] = m.data[r][c];
+      data[c + (r * m.columns)] = m.data[r * m.columns + c];
     }
   }
 }
@@ -280,13 +262,18 @@ void matrixSubtract(Matrix matrix, Matrix a, Matrix *res) {
   for (r = 0; r < matrix.rows; r++) {
     for (c = 0; c < matrix.columns; c++) {
       if (single_element) {
-        res->data[r][c] = matrix.data[r][c] - a.data[0][0];
+        res->data[r * res->columns + c] =
+            matrix.data[r * matrix.columns + c] - a.data[0];
       } else if (equal_rows && equal_columns) {
-        res->data[r][c] = matrix.data[r][c] - a.data[r][c];
+        res->data[r * res->columns + c] =
+            matrix.data[r * matrix.columns + c] -
+            a.data[r * a.columns + c];
       } else if (equal_rows) {
-        res->data[r][c] = matrix.data[r][c] - a.data[r][0];
+        res->data[r * res->columns + c] =
+            matrix.data[r * matrix.columns + c] - a.data[r * a.columns + 0];
       } else if (equal_columns) {
-        res->data[r][c] = matrix.data[r][c] - a.data[0][c];
+        res->data[r * res->columns + c] =
+            matrix.data[r * matrix.columns + c] - a.data[0 * a.columns + c];
       }
     }
   }
@@ -303,7 +290,8 @@ void transpose(Matrix **m) {
 #pragma omp parallel for private(r, c)
   for (r = 0; r < N; r++) {
     for (c = 0; c < M; c++) {
-      transposed_matrix->data[c][r] = temp->data[r][c];
+      transposed_matrix->data[c * transposed_matrix->columns + r] =
+          temp->data[r * temp->columns + c];
     }
   }
 
@@ -317,7 +305,7 @@ void zeros(Matrix *matrix) {
 #pragma omp parallel for private(c)
   for (r = 0; r < matrix->rows; r++) {
     for (c = 0; c < matrix->columns; c++) {
-      matrix->data[r][c] = 0.00;
+      matrix->data[r * matrix->columns + c] = 0.00;
     }
   }
 }
@@ -328,7 +316,8 @@ void fillMatrix(Matrix *matrix, double *data) {
 #pragma omp parallel for private(c)
   for (r = 0; r < matrix->rows; r++) {
     for (c = 0; c < matrix->columns; c++) {
-      matrix->data[r][c] = data[c + (matrix->columns * r)];
+      matrix->data[r * matrix->columns + c] =
+          data[c + (matrix->columns * r)];
     }
   }
 }
@@ -342,7 +331,7 @@ void InitRandomMatrix(Matrix *matrix) {
     for (c = 0; c < matrix->columns; c++) {
       random_number =
           ((double)(rand() - ((double)RAND_MAX / 2)) / ((double)RAND_MAX / 2));
-      matrix->data[r][c] = random_number;
+      matrix->data[r * matrix->columns + c] = random_number;
     }
   }
 }
@@ -354,9 +343,9 @@ void eye(Matrix *matrix) {
   for (r = 0; r < matrix->rows; r++) {
     for (c = 0; c < matrix->columns; c++) {
       if (c == r) {
-        matrix->data[r][c] = 1.0;
+        matrix->data[r * matrix->columns + c] = 1.0;
       } else {
-        matrix->data[r][c] = 0.0;
+        matrix->data[r * matrix->columns + c] = 0.0;
       }
     }
   }
@@ -370,7 +359,8 @@ bool cmpMatrix(Matrix m1, Matrix m2) {
 #pragma omp parallel for private(c) reduction(&& : equal)
   for (r = 0; r < m1.rows; r++) {
     for (c = 0; c < m1.columns; c++) {
-      if (fabs(m1.data[r][c] - m2.data[r][c]) > EPSILON) {
+      if (fabs(m1.data[r * m1.columns + c] -
+               m2.data[r * m2.columns + c]) > EPSILON) {
         // printf("a: %.4f not equal to b: %.4f, difference: %.4f
         // \n",m1.data[r][c], m2.data[r][c], fabs(m1.data[r][c] -
         // m2.data[r][c]));
@@ -388,7 +378,7 @@ void ones(Matrix *matrix) {
 #pragma omp parallel for private(c)
   for (r = 0; r < matrix->rows; r++) {
     for (c = 0; c < matrix->columns; c++) {
-      matrix->data[r][c] = 1.0;
+      matrix->data[r * matrix->columns + c] = 1.0;
     }
   }
 }
@@ -409,7 +399,8 @@ void dot(Matrix m1, Matrix m2, union Result *res) {
   for (r = 0; r < res->m.rows; r++) {
     for (c = 0; c < res->m.columns; c++) {
       for (i = 0; i < middle; i++) {
-        res->m.data[r][c] += m1.data[r][i] * m2.data[i][c];
+        res->m.data[r * res->m.columns + c] +=
+            m1.data[r * m1.columns + i] * m2.data[i * m2.columns + c];
       }
     }
   }
@@ -439,7 +430,7 @@ void copyMatrix(Matrix src, Matrix *dest) {
 #pragma omp parallel for private(c)
   for (r = 0; r < src.rows; r++) {
     for (c = 0; c < src.columns; c++) {
-      dest->data[r][c] = src.data[r][c];
+      dest->data[r * dest->columns + c] = src.data[r * src.columns + c];
     }
   }
 }
@@ -457,7 +448,8 @@ void matMult(Matrix m1, Matrix m2, Matrix *res) {
 #pragma omp parallel for private(c)
   for (r = 0; r < m1.rows; r++) {
     for (c = 0; c < m1.columns; c++) {
-      res->data[r][c] += m1.data[r][c] * m2.data[r][c];
+      res->data[r * res->columns + c] +=
+          m1.data[r * m1.columns + c] * m2.data[r * m2.columns + c];
     }
   }
 }
@@ -475,7 +467,8 @@ void hadamard_prod(Matrix m1, Matrix m2, Matrix *res) {
 #pragma omp parallel for private(c)
   for (r = 0; r < m1.rows; r++) {
     for (c = 0; c < m1.columns; c++) {
-      res->data[r][c] += m1.data[r][c] * m2.data[r][c];
+      res->data[r * res->columns + c] +=
+          m1.data[r * m1.columns + c] * m2.data[r * m2.columns + c];
     }
   }
 }
@@ -488,7 +481,7 @@ double matrix_sum(Matrix *m) {
 #pragma omp parallel for private(c)
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
-      res += m->data[r][c];
+      res += m->data[r * m->columns + c];
     }
   }
 

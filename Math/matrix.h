@@ -10,7 +10,7 @@
 
 typedef struct Matrix {
   int rows, columns;
-  double **data;
+  double *data;
   struct Matrix *next;
 } Matrix;
 
