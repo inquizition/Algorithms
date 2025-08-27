@@ -23,6 +23,7 @@ static CU_TestInfo test_cases[] = {
     {"test_hadamardProd_1x2", test_hadamardProd_1x2},
     {"tests_compareMatrix", tests_compareMatrix},
     {"test_relu_matrix", test_relu_matrix},
+    {"test_matrix_sum", test_matrix_sum},
 
     CU_TEST_INFO_NULL,
 };

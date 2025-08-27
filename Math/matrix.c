@@ -474,7 +474,7 @@ void hadamard_prod(Matrix m1, Matrix m2, Matrix *res) {
 }
 
 double matrix_sum(Matrix *m) {
-  double res;
+  double res = 0.0;
   int r;
   int c;
 

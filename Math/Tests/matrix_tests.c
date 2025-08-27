@@ -613,3 +613,19 @@ void test_relu_matrix(void) {
   freeMatrix(e_m2);
 }
 
+void test_matrix_sum(void) {
+  Matrix *m = allocateMatrix(2, 2);
+
+  double data[2][2] = {
+      {1.0, 2.0},
+      {3.0, 4.0},
+  };
+  fillMatrix(m, *data);
+
+  double sum = matrix_sum(m);
+
+  CU_ASSERT_EQUAL((int)(10 * sum), (int)(10 * 10.0));
+
+  freeMatrix(m);
+}
+
