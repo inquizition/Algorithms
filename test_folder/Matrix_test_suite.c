@@ -18,10 +18,12 @@ static CU_TestInfo test_cases[] = {
     { "test_matrixDot_2x4", test_matrixDot_2x4 },
     { "test_matrixDot_1x1", test_matrixDot_1x1 },
     { "test_matrixDot_4x4", test_matrixDot_4x4 },
+    { "test_matMult_2x2", test_matMult_2x2 },
     { "test_hadamardProd_2x2", test_hadamardProd_2x2 },
     { "test_hadamardProd_1x2", test_hadamardProd_1x2 },
     { "tests_compareMatrix", tests_compareMatrix },
     { "test_relu_matrix", test_relu_matrix },
+    { "test_matrix_sum", test_matrix_sum },
 
     CU_TEST_INFO_NULL,
 };
