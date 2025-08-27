@@ -464,6 +464,23 @@ void test_matrixDot_4x4(void) {
   freeMatrix(res);
 }
 
+void test_matMult_2x2(void) {
+  Matrix *res = allocateMatrix(2, 2);
+
+  matMult(*A_2_2, *B_2_2, res);
+
+  int r;
+  int c;
+  for (r = 0; r < res->rows; r++) {
+    for (c = 0; c < res->columns; c++) {
+      CU_ASSERT_EQUAL((int)(10 * res->data[r][c]),
+                      (int)(10 * A_DOT_B_2_2->data[r][c]));
+    }
+  }
+
+  freeMatrix(res);
+}
+
 void test_hadamardProd_2x2(void) {
   Matrix *m1 = allocateMatrix(2, 2);
   Matrix *m2 = allocateMatrix(2, 2);

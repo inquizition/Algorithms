@@ -25,6 +25,7 @@ void test_matrixDot_2x2(void);
 void test_matrixDot_2x4(void);
 void test_matrixDot_1x1(void);
 void test_matrixDot_4x4(void);
+void test_matMult_2x2(void);
 void test_hadamardProd_2x2(void);
 void test_hadamardProd_1x2(void);
 void tests_compareMatrix(void);
