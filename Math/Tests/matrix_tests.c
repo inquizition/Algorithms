@@ -5,14 +5,9 @@
 
 #define SIZE_2_1 2
 #define SIZE_2_2 4
-#define SIZE_2_4 8
 
 double A_2_2_data[SIZE_2_2];
 Matrix *A_2_2;
-double A_2_1_data[SIZE_2_1];
-Matrix *A_2_1;
-double A_2_4_data[SIZE_2_4];
-Matrix *A_2_4;
 double B_2_2_data[SIZE_2_2];
 Matrix *B_2_2;
 double A_DOT_B_2_2_data[SIZE_2_2];
@@ -41,30 +36,28 @@ static void fetch_data(double *buffer, char *file_path, int size)
 }
 
 int setup_import_test_data() {
-  fetch_data(A_2_2_data,"../Math/Tests/Test_Data/A_2_2.bin", SIZE_2_2);
+  fetch_data(A_2_2_data, "../Math/Tests/Test_Data/A_2_2.bin", SIZE_2_2);
   A_2_2 = allocateMatrix(2, 2);
   fillMatrix(A_2_2, A_2_2_data);
   printf("Fetched A_2_2\n");
 
-  fetch_data(A_2_2_data,"../Math/Tests/Test_Data/A_2_2.bin", SIZE_2_2);
-  A_2_4 = allocateMatrix(2, 2);
-  fillMatrix(A_2_2, A_2_2_data);
-  printf("Fetched A_2_2\n");
-  
-  fetch_data(B_2_2_data,"../Math/Tests/Test_Data/B_2_2.bin", SIZE_2_2);
+  fetch_data(B_2_2_data, "../Math/Tests/Test_Data/B_2_2.bin", SIZE_2_2);
   B_2_2 = allocateMatrix(2, 2);
   fillMatrix(B_2_2, B_2_2_data);
   printf("Fetched B_2_2\n");
-  
-  fetch_data(A_DOT_B_2_2_data,"../Math/Tests/Test_Data/A_DOT_B_2_2.bin", SIZE_2_2);
+
+  fetch_data(A_DOT_B_2_2_data,
+             "../Math/Tests/Test_Data/A_DOT_B_2_2.bin", SIZE_2_2);
   A_DOT_B_2_2 = allocateMatrix(2, 2);
   fillMatrix(A_DOT_B_2_2, A_DOT_B_2_2_data);
   printf("Fetched A_DOT_B_2_2\n");
 
-  fetch_data(A_ADD_B_2_2_data,"../Math/Tests/Test_Data/A_ADD_B_2_2.bin", SIZE_2_2);
+  fetch_data(A_ADD_B_2_2_data,
+             "../Math/Tests/Test_Data/A_ADD_B_2_2.bin", SIZE_2_2);
   A_ADD_B_2_2 = allocateMatrix(2, 2);
   fillMatrix(A_ADD_B_2_2, A_ADD_B_2_2_data);
   printf("Fetched A_ADD_B_2_2\n");
+
   return 0;
 }
 

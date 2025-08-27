@@ -478,7 +478,7 @@ double matrix_sum(Matrix *m) {
   int r;
   int c;
 
-#pragma omp parallel for private(c)
+#pragma omp parallel for private(c) reduction(+ : res)
   for (r = 0; r < m->rows; r++) {
     for (c = 0; c < m->columns; c++) {
       res += m->data[r * m->columns + c];

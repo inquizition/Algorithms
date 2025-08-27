@@ -15,7 +15,7 @@ typedef struct Matrix {
 } Matrix;
 
 union Result {
-  struct Matrix m;
+  Matrix m;
   double res;
 };
 
