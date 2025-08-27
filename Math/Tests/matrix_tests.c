@@ -466,8 +466,7 @@ void test_matMult_2x2(void) {
   int c;
   for (r = 0; r < res->rows; r++) {
     for (c = 0; c < res->columns; c++) {
-      CU_ASSERT_EQUAL((int)(10 * res->data[r][c]),
-                      (int)(10 * A_DOT_B_2_2->data[r][c]));
+      CU_ASSERT_EQUAL((int)(10 * MAT_AT(res, r, c)),(int)(10 * MAT_AT(A_DOT_B_2_2, r, c)));
     }
   }
 

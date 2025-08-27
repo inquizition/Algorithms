@@ -436,20 +436,27 @@ void copyMatrix(Matrix src, Matrix *dest) {
 }
 
 void matMult(Matrix m1, Matrix m2, Matrix *res) {
+  assert(m1.columns == m2.rows);
+
   res->rows = m1.rows;
   res->columns = m2.columns;
 
-  assert(m1.columns == m2.columns);
-  assert(m1.rows == m2.rows);
+  int size = res->rows * res->columns;
+  int i;
 
-  int r;
-  int c;
-
-#pragma omp parallel for private(c)
-  for (r = 0; r < m1.rows; r++) {
-    for (c = 0; c < m1.columns; c++) {
-      res->data[r * res->columns + c] +=
-          m1.data[r * m1.columns + c] * m2.data[r * m2.columns + c];
+#pragma omp parallel for
+  for (i = 0; i < size; i++) {
+    res->data[i] = 0.0;
+  }
+int r, c, k;
+#pragma omp parallel for private(c, k)
+  for (r = 0; r < res->rows; r++) {
+    for (c = 0; c < res->columns; c++) {
+      for (k = 0; k < m1.columns; k++) {
+        res->data[r * res->columns + c] +=
+            m1.data[r * m1.columns + k] *
+            m2.data[k * m2.columns + c];
+      }
     }
   }
 }
