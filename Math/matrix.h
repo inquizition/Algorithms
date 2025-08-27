@@ -10,18 +10,13 @@
 
 typedef struct Matrix {
   int rows, columns;
-  double **data;
+  double *data;
   struct Matrix *next;
 } Matrix;
 
 union Result {
-  struct Matrix m;
+  Matrix m;
   double res;
-};
-
-struct Node {
-  struct Matrixt *ptr;
-  struct Node *next;
 };
 
 static Matrix *allocated_matrices = NULL;
