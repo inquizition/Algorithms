@@ -4,10 +4,15 @@
 
 LM *InitLinear(int a, int b)
 {
-	LM *model_ptr;
-	model_ptr = (LM*) malloc(sizeof(LM));
-	model_ptr->A = allocateMatrix(b, a);
-	model_ptr->b = allocateMatrix(b,1);
+        LM *model_ptr = (LM*) malloc(sizeof(LM));
+        if(model_ptr == NULL)
+        {
+                return NULL;
+        }
+
+        /*  Weight matrix has shape: out_features x in_features  */
+        model_ptr->A = allocateMatrix(b, a);
+        model_ptr->b = allocateMatrix(b, 1);
 #ifdef TEST
 	ones(model_ptr->A);
 	ones(model_ptr->b);
@@ -17,35 +22,39 @@ LM *InitLinear(int a, int b)
 	InitRandomMatrix(model_ptr->A);
 	InitRandomMatrix(model_ptr->b);
 #endif
-	model_ptr->output_init = false;
+        model_ptr->output = NULL;
+        model_ptr->output_init = false;
 
-	return model_ptr; 
+        return model_ptr;
 }
 
 void Linear(LM *m, Matrix input)
-{	
-	//printf("Attempting Linear transformation.\n");
-	
+{
+        assert(m && m->A && m->b);
         assert(m->A->columns == input.columns);
-	if(m->output_init)
-	{
-		freeMatrix(m->output);
-	}
-	m->output = allocateMatrix(input.rows, m->A->rows);
-	m->output_init = true;	
-	Matrix *res_temp = allocateMatrix(m->output->rows, m->output->columns);
-	Matrix *A_t = allocateMatrix(m->A->rows, m->A->columns);
-	Matrix *b_t = allocateMatrix(m->b->rows, m->b->columns);
-	copyMatrix(*m->A, A_t);
-	copyMatrix(*m->b, b_t);
 
-	transpose(&A_t);
-	transpose(&b_t);
-	dot(input,*A_t, (union Result*)res_temp);
-	matrixAdd(*res_temp, *b_t, m->output);
-	freeMatrix(res_temp);
-	freeMatrix(A_t);
-	freeMatrix(b_t);
+        if(m->output_init)
+        {
+                freeMatrix(m->output);
+        }
+        m->output = allocateMatrix(input.rows, m->A->rows);
+        m->output_init = true;
+
+        /*  Transpose weights and bias for multiplication  */
+        Matrix *A_t = allocateMatrix(m->A->rows, m->A->columns);
+        Matrix *b_t = allocateMatrix(m->b->rows, m->b->columns);
+        copyMatrix(*m->A, A_t);
+        copyMatrix(*m->b, b_t);
+
+        transpose(&A_t);
+        transpose(&b_t);
+
+        /*  output = input * A^T + b^T  */
+        dot(input, *A_t, (union Result*)m->output);
+        matrixAdd(*m->output, *b_t, m->output);
+
+        freeMatrix(A_t);
+        freeMatrix(b_t);
 }
 
 void derivate_linear(LM *m, Matrix *error)
