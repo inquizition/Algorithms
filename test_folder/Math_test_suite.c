@@ -1,5 +1,6 @@
 #include "matrix_tests.h"
 #include "stress_test.h"
+#include "q_format_tests.h"
 
 static CU_TestInfo test_cases[] = {
     {"test_createMatrix", test_createMatrix},
@@ -25,6 +26,10 @@ static CU_TestInfo test_cases[] = {
     {"tests_compareMatrix", tests_compareMatrix},
     {"test_relu_matrix", test_relu_matrix},
     {"test_matrix_sum", test_matrix_sum},
+    {"test_round_trip_q15", test_round_trip_q15},
+    {"test_round_trip_q8", test_round_trip_q8},
+    {"test_basic_arith_q15", test_basic_arith_q15},
+    {"test_basic_arith_q8", test_basic_arith_q8},
 
     CU_TEST_INFO_NULL,
 };
