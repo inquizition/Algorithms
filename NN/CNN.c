@@ -4,6 +4,7 @@
 #include<stdint.h>
 #include<time.h>
 #include<error.h>
+#include"../Math/q_format.h"
 
 float dist[3];
 
@@ -35,12 +36,9 @@ float dReLu(float z) {
     }
 }
 
-int16_t Q15(float num) {
-    return num*pow(2,15);
-}
-
-float toQ15(int16_t num, int mult) {
-    return ((num-((pow(2,16))/2))/pow(2,15))*mult;
+#define Q15(x) (int16_t)to_q_format((x), 15)
+static inline float toQ15(int32_t num, int mult) {
+    return from_q_format(num, 15) * mult;
 }
 
 

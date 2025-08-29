@@ -5,7 +5,7 @@ if(OpenMP_C_FOUND)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS}")
 endif()
-add_library(MathFunctions matrix.c)
+add_library(MathFunctions matrix.c q_format.c)
 target_link_libraries(MathFunctions PRIVATE OpenMP::OpenMP_C)
 
 add_library(fft SHARED fft.c)
