@@ -19,10 +19,13 @@ static inline int32_t q_add(int32_t a, int32_t b) {
 }
 
 static inline int32_t q_mul(int32_t a, int32_t b, uint8_t fractional_bits) {
-    int64_t prod = (int64_t)a * (int64_t)b;
+    int64_t prod = (int64_t)a * b;
     if (fractional_bits > 0) {
-        int64_t rounding = (int64_t)1 << (fractional_bits - 1);
-        prod = (prod >= 0) ? (prod + rounding) : (prod - rounding);
+        int64_t remainder = prod & ((1LL << fractional_bits) - 1);
+        if(remainder != 0) {
+            int64_t rounding = (int64_t)1 << (fractional_bits - 1);
+            prod = (prod >= 0) ? (prod + rounding) : (prod - rounding);
+        }
         prod >>= fractional_bits;
     }
     if (prod > INT32_MAX) {
