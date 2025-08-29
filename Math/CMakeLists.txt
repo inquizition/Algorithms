@@ -7,3 +7,6 @@ if(OpenMP_C_FOUND)
 endif()
 add_library(MathFunctions matrix.c)
 target_link_libraries(MathFunctions PRIVATE OpenMP::OpenMP_C)
+
+add_library(fft SHARED fft.c)
+target_link_libraries(fft PRIVATE m)
