@@ -14,8 +14,11 @@ add_subdirectory(Math)
 add_subdirectory(Math/Tests)
 add_subdirectory(utils/Tests)
 add_subdirectory(utils/Matrix)
-add_subdirectory(utils/cunit/CUnit)
+if(EXISTS "${PROJECT_SOURCE_DIR}/utils/cunit/CUnit/CMakeLists.txt")
+    add_subdirectory(utils/cunit/CUnit)
+endif()
 add_subdirectory(test_folder)
+add_subdirectory(Filters)
 
 # add the executable
 add_executable(main main.c)

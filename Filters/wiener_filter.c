@@ -1,6 +1,6 @@
+#include "wiener_filter.h"
 #include <math.h>
 #include <stddef.h>
-#include <stdio.h>
 
 /**
  * Simple Wiener filter implementation for one-dimensional signals.
@@ -59,23 +59,3 @@ void wiener_filter(const double *input,
         output[i] = mean + weight * (input[i] - mean);
     }
 }
-
-int main(void) {
-    /* Example usage of the Wiener filter on a small noisy signal. */
-    const double input_signal[] = {1.0, 1.2, 0.9, 5.0, 1.1, 0.95, 1.05};
-    const size_t length = sizeof(input_signal) / sizeof(input_signal[0]);
-    double filtered[length];
-
-    const size_t window_radius = 1;   /* Three-sample window */
-    const double noise_variance = 0.05; /* Estimated noise power */
-
-    wiener_filter(input_signal, filtered, length, window_radius, noise_variance);
-
-    printf("Input  -> Output\n");
-    for (size_t i = 0; i < length; ++i) {
-        printf("%6.3f -> %6.3f\n", input_signal[i], filtered[i]);
-    }
-
-    return 0;
-}
-
