@@ -31,7 +31,7 @@ def _to_q_format(values):
     scaled = values * _SCALE
     scaled = np.where(scaled >= 0.0, scaled + 0.5, scaled - 0.5)
     scaled = np.clip(scaled, _MIN_Q, _MAX_Q)
-    return scaled.astype(np.int32)
+    return scaled #.astype(np.int32) causes crash
 
 
 def _from_q_format(values):
@@ -48,6 +48,7 @@ def fft(signal):
         raise ValueError("size of signal must be a power of 2")
     real = np.ascontiguousarray(_to_q_format(signal.real))
     imag = np.ascontiguousarray(_to_q_format(signal.imag))
+
     lib.fft(real.ctypes.data_as(POINTER(c_int32)),
             imag.ctypes.data_as(POINTER(c_int32)),
             n)
