@@ -2,8 +2,11 @@
 #define M_FFT_H
 
 #include <stddef.h>
+#include <stdint.h>
 
-void fft(double *real, double *imag, size_t n);
-void ifft(double *real, double *imag, size_t n);
+#define FFT_Q_FRACTIONAL_BITS 15
+
+void fft(int32_t *real, int32_t *imag, size_t n);
+void ifft(int32_t *real, int32_t *imag, size_t n);
 
 #endif // M_FFT_H
