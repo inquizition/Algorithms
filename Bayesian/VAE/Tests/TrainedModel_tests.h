@@ -1,6 +1,6 @@
 #include "CUnit/CUnit.h"
 #include "CUnit/Basic.h"
-#include "Matrix.h"
+#include "matrix.h"
 #include "model_api.h"
 #include "model.h"
 #include <stdlib.h>

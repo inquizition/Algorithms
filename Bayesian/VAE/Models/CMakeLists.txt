@@ -6,8 +6,8 @@ if(POLICY CMP0079)
 	cmake_policy(SET CMP0079 NEW)
 endif()
 
-target_link_libraries(ModelFunctions PUBLIC MatrixFunctions)
+target_link_libraries(ModelFunctions PUBLIC MathFunctions)
 
 target_include_directories(ModelFunctions PUBLIC
 		"${PROJECT_BINARY_DIR}"
-		"${PROJECT_SOURCE_DIR}/utils/Matrix")
+		"${PROJECT_SOURCE_DIR}/Math")
